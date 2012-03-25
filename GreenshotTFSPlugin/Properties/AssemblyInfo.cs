@@ -1,6 +1,6 @@
 /*
  * Greenshot - a free and open source screenshot tool
- * Copyright (C) 2011  Francis Noel
+ * Copyright (C) 2012  Francis Noel
  * 
  * For more information see: http://getgreenshot.org/
  * The Greenshot project is hosted on Sourceforge: http://sourceforge.net/projects/greenshot/
@@ -30,16 +30,16 @@ using Greenshot.Plugin;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Greenshot-Picasa-Plugin")]
-[assembly: AssemblyDescription("A plugin to upload images to Picasa")]
+[assembly: AssemblyTitle("Greenshot-TFS-Plugin")]
+[assembly: AssemblyDescription("A plugin to upload images to TFS")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Greenshot-Picasa-Plugin")]
-[assembly: AssemblyCopyright("Copyright (C) 2011")]
+[assembly: AssemblyProduct("Greenshot-TFS-Plugin")]
+[assembly: AssemblyCopyright("Copyright (C) 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 // The PluginAttribute describes the "entryType" and if the plugin is configurable
-[assembly: PluginAttribute("GreenshotPicasaPlugin.PicasaPlugin", true)] 
+[assembly: PluginAttribute("GreenshotTFSPlugin.TFSPlugin", true)] 
 
 // This sets the default COM visibility of types in the assembly to invisible.
 // If you need to expose a type to COM, use [ComVisible(true)] on that type.
@@ -51,4 +51,4 @@ using Greenshot.Plugin;
 //
 // You can specify all the values or you can use the default the Revision and 
 // Build Numbers by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.0.0.5")]

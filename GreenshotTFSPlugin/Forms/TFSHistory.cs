@@ -55,53 +55,52 @@ namespace GreenshotTFSPlugin.Forms {
 
 			// Init sorting
 			columnSorter = new ListViewColumnSorter();
-			this.listview_Picasa_uploads.ListViewItemSorter = columnSorter;
+			this.listview_TFS_uploads.ListViewItemSorter = columnSorter;
 			columnSorter.SortColumn = 2; //sort by date
 			columnSorter.Order = SortOrder.Descending;
 			redraw();
-			if (listview_Picasa_uploads.Items.Count > 0) {
-				listview_Picasa_uploads.Items[0].Selected = true;
+			if (listview_TFS_uploads.Items.Count > 0) {
+				listview_TFS_uploads.Items[0].Selected = true;
 			}
 		}
 
 		private void redraw() {
-			listview_Picasa_uploads.BeginUpdate();
-			listview_Picasa_uploads.Items.Clear();
-			listview_Picasa_uploads.Columns.Clear();
+			listview_TFS_uploads.BeginUpdate();
+			listview_TFS_uploads.Items.Clear();
+			listview_TFS_uploads.Columns.Clear();
 			string[] columns = { "Id", "Title", "Date"};
 			foreach (string column in columns) {
-				listview_Picasa_uploads.Columns.Add(column);
+				listview_TFS_uploads.Columns.Add(column);
 			}
-			foreach (TFSInfo imgurInfo in config.runtimePicasaHistory.Values) {
+			foreach (TFSInfo imgurInfo in config.runtimeTfsHistory.Values) {
 				ListViewItem item = new ListViewItem(imgurInfo.ID);
 				item.Tag = imgurInfo;
 				item.SubItems.Add(imgurInfo.Title);
-				item.SubItems.Add(imgurInfo.Timestamp.ToString());
-				listview_Picasa_uploads.Items.Add(item);
+				//item.SubItems.Add(imgurInfo.Timestamp.ToString());
+				listview_TFS_uploads.Items.Add(item);
 			}
 			for (int i = 0; i < columns.Length; i++) {
-				listview_Picasa_uploads.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
+				listview_TFS_uploads.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
 			}
 	
-			listview_Picasa_uploads.EndUpdate();
-			listview_Picasa_uploads.Refresh();
+			listview_TFS_uploads.EndUpdate();
+			listview_TFS_uploads.Refresh();
 			deleteButton.Enabled = false;
 			openButton.Enabled = false;
 			clipboardButton.Enabled = false;
 		}
 
-		private void Listview_Picasa_uploadsSelectedIndexChanged(object sender, EventArgs e) {
-			pictureBox_Picasa.Image = null;
-			if (listview_Picasa_uploads.SelectedItems != null && listview_Picasa_uploads.SelectedItems.Count > 0) {
+		private void Listview_TFS_uploadsSelectedIndexChanged(object sender, EventArgs e) {
+			
+			if (listview_TFS_uploads.SelectedItems != null && listview_TFS_uploads.SelectedItems.Count > 0) {
 				deleteButton.Enabled = true;
 				openButton.Enabled = true;
 				clipboardButton.Enabled = true;
-				if (listview_Picasa_uploads.SelectedItems.Count == 1) {
-					TFSInfo imgurInfo = (TFSInfo)listview_Picasa_uploads.SelectedItems[0].Tag;
-					pictureBox_Picasa.Image = imgurInfo.Image;
+				if (listview_TFS_uploads.SelectedItems.Count == 1) {
+					TFSInfo tfsInfo = (TFSInfo)listview_TFS_uploads.SelectedItems[0].Tag;
+					//pictureBox_TFS.Image = tfsInfo.Image;
 				}
 			} else {
-				pictureBox_Picasa.Image = null;
 				deleteButton.Enabled = false;
 				openButton.Enabled = false;
 				clipboardButton.Enabled = false;
@@ -113,7 +112,7 @@ namespace GreenshotTFSPlugin.Forms {
 		}
 
 		private void ClipboardButtonClick(object sender, EventArgs e) {
-			this.clipboardUrl(config.PictureDisplaySize);
+			this.clipboardUrl();
 		}
 
 		private void FinishedButtonClick(object sender, EventArgs e) {
@@ -121,7 +120,7 @@ namespace GreenshotTFSPlugin.Forms {
 		}
 
 		private void OpenButtonClick(object sender, EventArgs e) {
-			this.openPicture(config.PictureDisplaySize);
+			this.OpenUrl();
 		}
 		
 		private void listview_imgur_uploads_ColumnClick(object sender, ColumnClickEventArgs e) {
@@ -140,7 +139,7 @@ namespace GreenshotTFSPlugin.Forms {
 			}
 
 			// Perform the sort with these new sort options.
-			this.listview_Picasa_uploads.Sort();
+			this.listview_TFS_uploads.Sort();
 		}
 
 		
@@ -149,61 +148,39 @@ namespace GreenshotTFSPlugin.Forms {
 			instance = null;
 		}
 
+		private void ToolStripMenuItem_Open_Click(object sender, EventArgs e)
+		{
+			this.OpenUrl();
+		}
+
+		private void ToolStripMenuItem_copyLinksToClipboard_Click(object sender, EventArgs e)
+		{
+			this.clipboardUrl();
+		}
+
 		private void ToolStripMenuItem_Delete_Click(object sender, EventArgs e)
 		{
 			this.deletePicture();
 		}
 
-		private void ToolStripMenuItem_Open_webUrl_Click(object sender, EventArgs e)
-		{
-			this.openPicture(PictureDisplaySize.WebUrl);
-		}
-
-		private void ToolStripMenuItem_Open_SquareThumbnailUrl_Click(object sender, EventArgs e)
-		{
-			this.openPicture(PictureDisplaySize.SquareThumbnailUrl);
-		}
-
-		private void ToolStripMenuItem_Open_OriginalUrl_Click(object sender, EventArgs e)
-		{
-			this.openPicture(PictureDisplaySize.OriginalUrl);
-		}
-
-		private void ToolStripMenuItem_Copy_WebUrl_Click(object sender, EventArgs e)
-		{
-			this.clipboardUrl(PictureDisplaySize.WebUrl);
-		}
-
-		private void ToolStripMenuItem_Copy_SquareThumbnailUrl_Click(object sender, EventArgs e)
-		{
-			this.clipboardUrl(PictureDisplaySize.SquareThumbnailUrl);
-		}
-
-		private void ToolStripMenuItem_Copy_OriginalUrl_Click(object sender, EventArgs e)
-		{
-			this.clipboardUrl(PictureDisplaySize.OriginalUrl);
-		}
-
-			
-
 		private void deletePicture()
 		{
-			if (listview_Picasa_uploads.SelectedItems != null && listview_Picasa_uploads.SelectedItems.Count > 0)
+			if (listview_TFS_uploads.SelectedItems != null && listview_TFS_uploads.SelectedItems.Count > 0)
 			{
-				for (int i = 0; i < listview_Picasa_uploads.SelectedItems.Count; i++)
+				for (int i = 0; i < listview_TFS_uploads.SelectedItems.Count; i++)
 				{
-					TFSInfo imgurInfo = (TFSInfo)listview_Picasa_uploads.SelectedItems[i].Tag;
+					TFSInfo imgurInfo = (TFSInfo)listview_TFS_uploads.SelectedItems[i].Tag;
 					DialogResult result = MessageBox.Show(lang.GetFormattedString(LangKey.delete_question, imgurInfo.Title), lang.GetFormattedString(LangKey.delete_title, imgurInfo.ID), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 					if (result == DialogResult.Yes)
 					{
 						BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
 						try
 						{
-							TFSUtils.DeletePicasaImage(imgurInfo);
+							TFSUtils.DeleteTfsWorkItem(imgurInfo);
 						}
 						catch (Exception ex)
 						{
-							LOG.Warn("Problem communicating with Picasa: ", ex);
+							LOG.Warn("Problem communicating with TFS: ", ex);
 						}
 						finally
 						{
@@ -217,29 +194,31 @@ namespace GreenshotTFSPlugin.Forms {
 			redraw();
 		}
 
-		private void openPicture(PictureDisplaySize pictureDisplaySize)
-		{
-			if (listview_Picasa_uploads.SelectedItems != null && listview_Picasa_uploads.SelectedItems.Count > 0)
-			{
-				for (int i = 0; i < listview_Picasa_uploads.SelectedItems.Count; i++)
-				{
-					TFSInfo imgurInfo = (TFSInfo)listview_Picasa_uploads.SelectedItems[i].Tag;
-
-					System.Diagnostics.Process.Start(imgurInfo.LinkUrl(pictureDisplaySize));
-				}
-			}
-		}
-
-		private void clipboardUrl(PictureDisplaySize pictureDisplaySize)
+		private void OpenUrl()
 		{
 			StringBuilder links = new StringBuilder();
-			if (listview_Picasa_uploads.SelectedItems != null && listview_Picasa_uploads.SelectedItems.Count > 0)
+			if (listview_TFS_uploads.SelectedItems != null && listview_TFS_uploads.SelectedItems.Count > 0)
 			{
-				for (int i = 0; i < listview_Picasa_uploads.SelectedItems.Count; i++)
+				for (int i = 0; i < listview_TFS_uploads.SelectedItems.Count; i++)
 				{
-					TFSInfo PicasaInfo = (TFSInfo)listview_Picasa_uploads.SelectedItems[i].Tag;
+					TFSInfo TFSInfo = (TFSInfo)listview_TFS_uploads.SelectedItems[i].Tag;
 
-					links.AppendLine(PicasaInfo.LinkUrl(pictureDisplaySize));
+					System.Diagnostics.Process.Start(TFSInfo.WebUrl);
+				}
+			}
+			
+		}
+
+		private void clipboardUrl()
+		{
+			StringBuilder links = new StringBuilder();
+			if (listview_TFS_uploads.SelectedItems != null && listview_TFS_uploads.SelectedItems.Count > 0)
+			{
+				for (int i = 0; i < listview_TFS_uploads.SelectedItems.Count; i++)
+				{
+					TFSInfo TFSInfo = (TFSInfo)listview_TFS_uploads.SelectedItems[i].Tag;
+
+					links.AppendLine(TFSInfo.WebUrl);
 				}
 			}
 			try
@@ -252,10 +231,8 @@ namespace GreenshotTFSPlugin.Forms {
 			}
 		}
 
-		private void pictureBox_Picasa_Click(object sender, EventArgs e)
-		{
-			this.openPicture(config.PictureDisplaySize);
-		}
+		
+		
 
 	}
 }

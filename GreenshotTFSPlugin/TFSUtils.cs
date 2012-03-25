@@ -25,10 +25,12 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Net;
-using Google.GData.Client;
-using Google.GData.Photos;
 using GreenshotPlugin.Core;
 using IniFile;
+using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using GreenshotTFSPlugin.Forms;
+using System.Windows.Forms;
 
 namespace GreenshotTFSPlugin {
 	/// <summary>
@@ -36,27 +38,27 @@ namespace GreenshotTFSPlugin {
 	/// </summary>
 	public class TFSUtils {
 		private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(TFSUtils));
-		public static string Picasa_APPLICATION_NAME = "390bea54b8ef045716dd34680d6e21ba";
+		public static string TFS_APPLICATION_NAME = "390bea54b8ef045716dd34680d6e21ba";
 		private static TFSConfiguration config = IniConfig.GetIniSection<TFSConfiguration>();
 
 		private TFSUtils() {
 		}
 
 		public static void LoadHistory() {
-			if (config.runtimePicasaHistory == null) {
+			if (config.runtimeTfsHistory == null) {
 				return;
 			}
-			if (config.PicasaUploadHistory == null)
+			if (config.TfsUploadHistory == null)
 			{
 				return;
 			}
 
-			if (config.runtimePicasaHistory.Count == config.PicasaUploadHistory.Count) {
+			if (config.runtimeTfsHistory.Count == config.TfsUploadHistory.Count) {
 				return;
 			}
-			// Load the Picasa history
+			// Load the TFS history
 			List<string> hashes = new List<string>();
-			foreach (string hash in config.PicasaUploadHistory.Keys)
+			foreach (string hash in config.TfsUploadHistory.Keys)
 			{
 				hashes.Add(hash);
 			}
@@ -64,22 +66,22 @@ namespace GreenshotTFSPlugin {
 			bool saveNeeded = false;
 
 			foreach(string hash in hashes) {
-				if (config.runtimePicasaHistory.ContainsKey(hash)) {
+				if (config.runtimeTfsHistory.ContainsKey(hash)) {
 					// Already loaded
 					continue;
 				}
 				try {
-					TFSInfo imgurInfo = TFSUtils.RetrievePicasaInfo(hash);
-					if (imgurInfo != null) {
-						TFSUtils.RetrievePicasaThumbnail(imgurInfo);
-						config.runtimePicasaHistory.Add(hash, imgurInfo);
+					TFSInfo tfsInfo = TFSUtils.RetrieveTFSInfo(hash);
+					if (tfsInfo != null) {
+						//TFSUtils.RetrieveTFSThumbnail(imgurInfo);
+						config.runtimeTfsHistory.Add(hash, tfsInfo);
 					} else {
-						LOG.DebugFormat("Deleting not found Picasa {0} from config.", hash);
-						config.PicasaUploadHistory.Remove(hash);
+						LOG.DebugFormat("Deleting not found TFS {0} from config.", hash);
+						config.TfsUploadHistory.Remove(hash);
 						saveNeeded = true;
 					}
 				} catch (Exception e) {
-					LOG.Error("Problem loading Picasa history for hash " + hash, e);
+					LOG.Error("Problem loading TFS history for hash " + hash, e);
 				}
 			}
 			if (saveNeeded) {
@@ -89,112 +91,38 @@ namespace GreenshotTFSPlugin {
 		}
 
 		/// <summary>
-		/// Do the actual upload to Picasa
-		/// For more details on the available parameters, see: http://code.google.com/apis/picasaweb/docs/1.0/developers_guide_dotnet.html
+		/// Do the actual upload to TFS
 		/// </summary>
 		/// <param name="imageData">byte[] with image data</param>
-		/// <returns>PicasaResponse</returns>
-		public static TFSInfo UploadToPicasa(byte[] imageData, string title, string filename, string contentType)
+		/// <returns>TFSResponse</returns>
+		public static TFSInfo UploadToTFS(byte[] imageData, string title, string filename, string contentType)
 		{
-			PicasaService service = new PicasaService(Picasa_APPLICATION_NAME);
-			service.setUserCredentials(config.Username, config.Password);
-
-			Uri postUri = new Uri(PicasaQuery.CreatePicasaUri(config.Username));
-
-			// build the data stream
-			Stream data = new MemoryStream(imageData);
-
-			PicasaEntry entry = (PicasaEntry)service.Insert(postUri, data, contentType, filename);
-
-			return RetrievePicasaInfo(entry);
-		}
-
-		public static Image CreateThumbnail(Image image, int thumbWidth, int thumbHeight) {
-			int srcWidth=image.Width;
-			int srcHeight=image.Height; 
-			Bitmap bmp = new Bitmap(thumbWidth, thumbHeight);  
-			using (Graphics gr = System.Drawing.Graphics.FromImage(bmp)) {
-				gr.SmoothingMode = SmoothingMode.HighQuality  ; 
-				gr.CompositingQuality = CompositingQuality.HighQuality; 
-				gr.InterpolationMode = InterpolationMode.High; 
-				System.Drawing.Rectangle rectDestination = new System.Drawing.Rectangle(0, 0, thumbWidth, thumbHeight);
-				gr.DrawImage(image, rectDestination, 0, 0, srcWidth, srcHeight, GraphicsUnit.Pixel);  
-			}
-			return bmp;
-		}
-
-		public static void RetrievePicasaThumbnail(TFSInfo imgurInfo) {
-			LOG.InfoFormat("Retrieving Picasa image for {0} with url {1}", imgurInfo.ID, imgurInfo);
-			HttpWebRequest webRequest = (HttpWebRequest)NetworkHelper.CreatedWebRequest(imgurInfo.SquareThumbnailUrl);
-			webRequest.Method = "GET";
-			webRequest.ServicePoint.Expect100Continue = false;
-
-			using (WebResponse response = webRequest.GetResponse()) {
-				Stream responseStream = response.GetResponseStream();
-				imgurInfo.Image = Image.FromStream(responseStream);
-			}
-			return;
-		}
-
-		public static TFSInfo RetrievePicasaInfo(string id)
-		{
-			return RetrievePicasaInfo(RetrievePicasaEntry(id));
-		}
-
-		public static TFSInfo RetrievePicasaInfo(PicasaEntry picasaEntry)
-		{
-			PhotoAccessor photoAccessor = new PhotoAccessor(picasaEntry);
-
-			LOG.InfoFormat("Retrieving Picasa info for {0}", photoAccessor.Id);
-
-			TFSInfo picasaInfo = new TFSInfo();
-
-			picasaInfo.ID = photoAccessor.Id;
-			picasaInfo.Title = picasaEntry.Title.Text;
-			picasaInfo.Timestamp = picasaEntry.Updated;
-			picasaInfo.Description = picasaEntry.Summary.Text;
-			picasaInfo.SquareThumbnailUrl = picasaEntry.Media.Thumbnails[0].Url;
-			picasaInfo.OriginalUrl = picasaEntry.Media.Content.Url;
-
-			List<AtomLink> links = picasaEntry.Links.Where(r => r.Type.Equals("text/html", StringComparison.OrdinalIgnoreCase)).ToList();
-			picasaInfo.WebUrl = string.Empty;
-			if (links.Count > 0)
+			AddForm addForm = new AddForm();
+			addForm.ImageData = imageData;
+			addForm.Title = title;
+			addForm.Filename = filename;
+			addForm.ContentType = contentType;
+			if (addForm.ShowDialog() == DialogResult.OK)
 			{
-				picasaInfo.WebUrl = links.First().HRef.ToString();
+				return addForm.TFSInfo;
 			}
-			return picasaInfo;
+			else
+			{
+				return null;
+			}
+
 		}
 
-		public static PicasaEntry RetrievePicasaEntry(string id)
+		public static TFSInfo RetrieveTFSInfo(string id)
 		{
-			PicasaService service = new PicasaService(Picasa_APPLICATION_NAME);
-			service.setUserCredentials(config.Username, config.Password);
-
-			PhotoQuery photoQuery = new PhotoQuery(PicasaQuery.CreatePicasaUri(config.Username, string.Empty, id));
-			photoQuery.NumberToRetrieve = 1;
-			PicasaFeed picasaFeed = service.Query(photoQuery);
-			
-			if (picasaFeed.Entries.Count > 0)
-			{
-				return  (PicasaEntry)picasaFeed.Entries[0];
-			}
-
+			//return RetrieveTFSInfo(RetrieveTFSEntry(id));
 			return null;
 		}
 
-		public static void DeletePicasaImage(TFSInfo picasaInfo)
+		
+		public static void DeleteTfsWorkItem(TFSInfo tfsInfo)
 		{
-			// Make sure we remove it from the history, if no error occured
-			config.runtimePicasaHistory.Remove(picasaInfo.ID);
-			config.PicasaUploadHistory.Remove(picasaInfo.ID);
-
-			PicasaEntry picasaEntry = RetrievePicasaEntry(picasaInfo.ID);
-			if (picasaEntry != null)
-			{
-				picasaEntry.Delete();
-			}
-
-			picasaInfo.Image = null;
+			
 		}
 	}
 }

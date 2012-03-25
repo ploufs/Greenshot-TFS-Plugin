@@ -32,7 +32,7 @@ namespace GreenshotTFSPlugin {
 	/// </summary>
 	public class Language : LanguageContainer, ILanguage  {
 		private static ILanguage uniqueInstance;
-		private const string LANGUAGE_FILENAME_PATTERN = @"language_Picasaplugin-*.xml";
+		private const string LANGUAGE_FILENAME_PATTERN = @"language_TFSplugin-*.xml";
 		
 		public static ILanguage GetInstance() {
 			if(uniqueInstance == null) {

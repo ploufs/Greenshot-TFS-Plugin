@@ -49,27 +49,27 @@ namespace GreenshotTFSPlugin {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.label_UserName = new System.Windows.Forms.Label();
-            this.textBoxUsername = new System.Windows.Forms.TextBox();
             this.combobox_uploadimageformat = new System.Windows.Forms.ComboBox();
             this.label_upload_format = new System.Windows.Forms.Label();
             this.historyButton = new System.Windows.Forms.Button();
             this.label_AfterUpload = new System.Windows.Forms.Label();
             this.checkboxAfterUploadOpenHistory = new System.Windows.Forms.CheckBox();
             this.checkboxAfterUploadLinkToClipBoard = new System.Windows.Forms.CheckBox();
-            this.label_Password = new System.Windows.Forms.Label();
-            this.textBoxPassword = new System.Windows.Forms.TextBox();
-            this.label_DefaultSize = new System.Windows.Forms.Label();
-            this.comboBox_DefaultSize = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textbox_tfsUrl = new System.Windows.Forms.TextBox();
+            this.buttonConnect = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textbox_defaultProject = new System.Windows.Forms.TextBox();
+            this.checkbox_openWorkItem = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(267, 182);
+            this.buttonOK.Location = new System.Drawing.Point(292, 134);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
-            this.buttonOK.TabIndex = 12;
+            this.buttonOK.TabIndex = 14;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.ButtonOKClick);
@@ -77,30 +77,13 @@ namespace GreenshotTFSPlugin {
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(348, 182);
+            this.buttonCancel.Location = new System.Drawing.Point(373, 134);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 13;
+            this.buttonCancel.TabIndex = 15;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.ButtonCancelClick);
-            // 
-            // label_UserName
-            // 
-            this.label_UserName.Location = new System.Drawing.Point(10, 18);
-            this.label_UserName.Name = "label_UserName";
-            this.label_UserName.Size = new System.Drawing.Size(84, 20);
-            this.label_UserName.TabIndex = 0;
-            this.label_UserName.Text = "Username";
-            // 
-            // textBoxUsername
-            // 
-            this.textBoxUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxUsername.Location = new System.Drawing.Point(113, 16);
-            this.textBoxUsername.Name = "textBoxUsername";
-            this.textBoxUsername.Size = new System.Drawing.Size(229, 20);
-            this.textBoxUsername.TabIndex = 1;
             // 
             // combobox_uploadimageformat
             // 
@@ -108,26 +91,26 @@ namespace GreenshotTFSPlugin {
             | System.Windows.Forms.AnchorStyles.Right)));
             this.combobox_uploadimageformat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.combobox_uploadimageformat.FormattingEnabled = true;
-            this.combobox_uploadimageformat.Location = new System.Drawing.Point(113, 77);
+            this.combobox_uploadimageformat.Location = new System.Drawing.Point(113, 69);
             this.combobox_uploadimageformat.Name = "combobox_uploadimageformat";
-            this.combobox_uploadimageformat.Size = new System.Drawing.Size(309, 21);
-            this.combobox_uploadimageformat.TabIndex = 5;
+            this.combobox_uploadimageformat.Size = new System.Drawing.Size(334, 21);
+            this.combobox_uploadimageformat.TabIndex = 6;
             // 
             // label_upload_format
             // 
-            this.label_upload_format.Location = new System.Drawing.Point(10, 83);
+            this.label_upload_format.Location = new System.Drawing.Point(10, 75);
             this.label_upload_format.Name = "label_upload_format";
             this.label_upload_format.Size = new System.Drawing.Size(84, 20);
-            this.label_upload_format.TabIndex = 4;
+            this.label_upload_format.TabIndex = 5;
             this.label_upload_format.Text = "Upload format";
             // 
             // historyButton
             // 
             this.historyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.historyButton.Location = new System.Drawing.Point(13, 182);
+            this.historyButton.Location = new System.Drawing.Point(13, 134);
             this.historyButton.Name = "historyButton";
             this.historyButton.Size = new System.Drawing.Size(75, 23);
-            this.historyButton.TabIndex = 11;
+            this.historyButton.TabIndex = 13;
             this.historyButton.Text = "History";
             this.historyButton.UseVisualStyleBackColor = true;
             this.historyButton.Click += new System.EventHandler(this.ButtonHistoryClick);
@@ -135,20 +118,20 @@ namespace GreenshotTFSPlugin {
             // label_AfterUpload
             // 
             this.label_AfterUpload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label_AfterUpload.Location = new System.Drawing.Point(10, 156);
+            this.label_AfterUpload.Location = new System.Drawing.Point(10, 108);
             this.label_AfterUpload.Name = "label_AfterUpload";
             this.label_AfterUpload.Size = new System.Drawing.Size(84, 21);
-            this.label_AfterUpload.TabIndex = 8;
+            this.label_AfterUpload.TabIndex = 9;
             this.label_AfterUpload.Text = "After upload";
             // 
             // checkboxAfterUploadOpenHistory
             // 
             this.checkboxAfterUploadOpenHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkboxAfterUploadOpenHistory.AutoSize = true;
-            this.checkboxAfterUploadOpenHistory.Location = new System.Drawing.Point(117, 155);
+            this.checkboxAfterUploadOpenHistory.Location = new System.Drawing.Point(117, 107);
             this.checkboxAfterUploadOpenHistory.Name = "checkboxAfterUploadOpenHistory";
             this.checkboxAfterUploadOpenHistory.Size = new System.Drawing.Size(85, 17);
-            this.checkboxAfterUploadOpenHistory.TabIndex = 9;
+            this.checkboxAfterUploadOpenHistory.TabIndex = 10;
             this.checkboxAfterUploadOpenHistory.Text = "Open history";
             this.checkboxAfterUploadOpenHistory.UseVisualStyleBackColor = true;
             // 
@@ -156,68 +139,88 @@ namespace GreenshotTFSPlugin {
             // 
             this.checkboxAfterUploadLinkToClipBoard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkboxAfterUploadLinkToClipBoard.AutoSize = true;
-            this.checkboxAfterUploadLinkToClipBoard.Location = new System.Drawing.Point(208, 155);
+            this.checkboxAfterUploadLinkToClipBoard.Location = new System.Drawing.Point(208, 107);
             this.checkboxAfterUploadLinkToClipBoard.Name = "checkboxAfterUploadLinkToClipBoard";
             this.checkboxAfterUploadLinkToClipBoard.Size = new System.Drawing.Size(104, 17);
-            this.checkboxAfterUploadLinkToClipBoard.TabIndex = 10;
+            this.checkboxAfterUploadLinkToClipBoard.TabIndex = 11;
             this.checkboxAfterUploadLinkToClipBoard.Text = "Link to clipboard";
             this.checkboxAfterUploadLinkToClipBoard.UseVisualStyleBackColor = true;
             // 
-            // label_Password
+            // label1
             // 
-            this.label_Password.Location = new System.Drawing.Point(10, 47);
-            this.label_Password.Name = "label_Password";
-            this.label_Password.Size = new System.Drawing.Size(84, 20);
-            this.label_Password.TabIndex = 2;
-            this.label_Password.Text = "Password";
+            this.label1.Location = new System.Drawing.Point(10, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(97, 21);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Tfs :";
             // 
-            // textBoxPassword
+            // textbox_tfsUrl
             // 
-            this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textbox_tfsUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxPassword.Location = new System.Drawing.Point(113, 45);
-            this.textBoxPassword.Name = "textBoxPassword";
-            this.textBoxPassword.PasswordChar = '*';
-            this.textBoxPassword.Size = new System.Drawing.Size(229, 20);
-            this.textBoxPassword.TabIndex = 3;
-            this.textBoxPassword.UseSystemPasswordChar = true;
+            this.textbox_tfsUrl.Location = new System.Drawing.Point(113, 17);
+            this.textbox_tfsUrl.Name = "textbox_tfsUrl";
+            this.textbox_tfsUrl.ReadOnly = true;
+            this.textbox_tfsUrl.Size = new System.Drawing.Size(254, 20);
+            this.textbox_tfsUrl.TabIndex = 1;
             // 
-            // label_DefaultSize
+            // buttonConnect
             // 
-            this.label_DefaultSize.Location = new System.Drawing.Point(7, 117);
-            this.label_DefaultSize.Name = "label_DefaultSize";
-            this.label_DefaultSize.Size = new System.Drawing.Size(84, 21);
-            this.label_DefaultSize.TabIndex = 6;
-            this.label_DefaultSize.Text = "Default size";
+            this.buttonConnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonConnect.Location = new System.Drawing.Point(373, 15);
+            this.buttonConnect.Name = "buttonConnect";
+            this.buttonConnect.Size = new System.Drawing.Size(75, 23);
+            this.buttonConnect.TabIndex = 2;
+            this.buttonConnect.Text = "Connect";
+            this.buttonConnect.UseVisualStyleBackColor = true;
+            this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
             // 
-            // comboBox_DefaultSize
+            // label2
             // 
-            this.comboBox_DefaultSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.label2.Location = new System.Drawing.Point(8, 46);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(97, 18);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Default project";
+            // 
+            // textbox_defaultProject
+            // 
+            this.textbox_defaultProject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox_DefaultSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox_DefaultSize.FormattingEnabled = true;
-            this.comboBox_DefaultSize.Location = new System.Drawing.Point(113, 112);
-            this.comboBox_DefaultSize.Name = "comboBox_DefaultSize";
-            this.comboBox_DefaultSize.Size = new System.Drawing.Size(309, 21);
-            this.comboBox_DefaultSize.TabIndex = 7;
+            this.textbox_defaultProject.Location = new System.Drawing.Point(113, 43);
+            this.textbox_defaultProject.Name = "textbox_defaultProject";
+            this.textbox_defaultProject.ReadOnly = true;
+            this.textbox_defaultProject.Size = new System.Drawing.Size(332, 20);
+            this.textbox_defaultProject.TabIndex = 4;
+            // 
+            // checkbox_openWorkItem
+            // 
+            this.checkbox_openWorkItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkbox_openWorkItem.AutoSize = true;
+            this.checkbox_openWorkItem.Location = new System.Drawing.Point(318, 107);
+            this.checkbox_openWorkItem.Name = "checkbox_openWorkItem";
+            this.checkbox_openWorkItem.Size = new System.Drawing.Size(100, 17);
+            this.checkbox_openWorkItem.TabIndex = 12;
+            this.checkbox_openWorkItem.Text = "Open work item";
+            this.checkbox_openWorkItem.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(432, 214);
-            this.Controls.Add(this.label_DefaultSize);
-            this.Controls.Add(this.comboBox_DefaultSize);
-            this.Controls.Add(this.label_Password);
-            this.Controls.Add(this.textBoxPassword);
+            this.ClientSize = new System.Drawing.Size(457, 166);
+            this.Controls.Add(this.checkbox_openWorkItem);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.textbox_defaultProject);
+            this.Controls.Add(this.buttonConnect);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textbox_tfsUrl);
             this.Controls.Add(this.checkboxAfterUploadLinkToClipBoard);
             this.Controls.Add(this.checkboxAfterUploadOpenHistory);
             this.Controls.Add(this.label_AfterUpload);
             this.Controls.Add(this.historyButton);
             this.Controls.Add(this.label_upload_format);
             this.Controls.Add(this.combobox_uploadimageformat);
-            this.Controls.Add(this.label_UserName);
-            this.Controls.Add(this.textBoxUsername);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -225,24 +228,24 @@ namespace GreenshotTFSPlugin {
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingsForm";
-            this.Text = "Picasa settings";
+            this.Text = "TFS settings";
             this.ResumeLayout(false);
             this.PerformLayout();
 
 		}
 		private System.Windows.Forms.Button historyButton;
 		private System.Windows.Forms.ComboBox combobox_uploadimageformat;
-		private System.Windows.Forms.Label label_upload_format;
-		private System.Windows.Forms.TextBox textBoxUsername;
-		private System.Windows.Forms.Label label_UserName;
+        private System.Windows.Forms.Label label_upload_format;
 		private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Label label_AfterUpload;
         private System.Windows.Forms.CheckBox checkboxAfterUploadOpenHistory;
         private System.Windows.Forms.CheckBox checkboxAfterUploadLinkToClipBoard;
-        private System.Windows.Forms.Label label_Password;
-        private System.Windows.Forms.TextBox textBoxPassword;
-        private System.Windows.Forms.Label label_DefaultSize;
-        private System.Windows.Forms.ComboBox comboBox_DefaultSize;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textbox_tfsUrl;
+        private System.Windows.Forms.Button buttonConnect;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textbox_defaultProject;
+        private System.Windows.Forms.CheckBox checkbox_openWorkItem;
 	}
 }

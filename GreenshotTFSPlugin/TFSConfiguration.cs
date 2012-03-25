@@ -26,97 +26,100 @@ using GreenshotPlugin.Controls;
 using GreenshotPlugin.Core;
 using IniFile;
 
-namespace GreenshotTFSPlugin {
-	/// <summary>
-	/// Description of ImgurConfiguration.
-	/// </summary>
-	[IniSection("Picasa", Description = "Greenshot Picasa Plugin configuration")]
-	public class TFSConfiguration : IniSection {
-		[IniProperty("UploadFormat", Description="What file type to use for uploading", DefaultValue="png")]
-		public OutputFormat UploadFormat;
+namespace GreenshotTFSPlugin
+{
+    /// <summary>
+    /// Description of ImgurConfiguration.
+    /// </summary>
+    [IniSection("TFS", Description = "Greenshot TFS Plugin configuration")]
+    public class TFSConfiguration : IniSection
+    {
+        [IniProperty("UploadFormat", Description = "What file type to use for uploading", DefaultValue = "png")]
+        public OutputFormat UploadFormat;
 
-		[IniProperty("UploadJpegQuality", Description="JPEG file save quality in %.", DefaultValue="80")]
-		public int UploadJpegQuality;
+        [IniProperty("UploadJpegQuality", Description = "JPEG file save quality in %.", DefaultValue = "80")]
+        public int UploadJpegQuality;
 
-		[IniProperty("AfterUploadOpenHistory", Description = "After upload open history.", DefaultValue = "true")]
-		public bool AfterUploadOpenHistory;
+        [IniProperty("AfterUploadOpenWorkItem", Description = "After upload open work item.", DefaultValue = "false")]
+        public bool AfterUploadOpenWorkItem;
 
-		[IniProperty("AfterUploadLinkToClipBoard", Description = "After upload send Picasa link to clipboard.", DefaultValue = "true")]
-		public bool AfterUploadLinkToClipBoard;
+        [IniProperty("AfterUploadOpenHistory", Description = "After upload open history.", DefaultValue = "false")]
+        public bool AfterUploadOpenHistory;
 
-		[IniProperty("PictureDisplaySize", Description = "Default picture display size", DefaultValue = "WebUrl")]
-		public PictureDisplaySize PictureDisplaySize;
+        [IniProperty("AfterUploadLinkToClipBoard", Description = "After upload send TFS link to clipboard.", DefaultValue = "true")]
+        public bool AfterUploadLinkToClipBoard;
 
-		[IniProperty("PicasaUsername", Description = "Username", DefaultValue = "")]
-		public string Username;
+       
+        [IniProperty("TfsServerUrl", Description = "Tfs Server Url", DefaultValue = "")]
+        public string TfsServerUrl;
 
-		[IniProperty("PicasaPasswordEncrypt", Description = "Password ecrypt", DefaultValue = "")]
-		public string PasswordEncrypt;
+        [IniProperty("TfsDefaultProject", Description = "Tfs default project", DefaultValue = "")]
+        public string TfsDefaultProject;
 
-		[IniProperty("PicasaUploadHistory", Description = "Picasa upload history (PicasaUploadHistory.hash=deleteHash)")]
-		public Dictionary<string, string> PicasaUploadHistory;
+        [IniProperty("TfsUploadHistory", Description = "TFS upload history (TFSUploadHistory.hash=deleteHash)")]
+        public Dictionary<string, string> TfsUploadHistory;
 
-		private string encryptKey = "D9527C3EC8F44A31B7C52A99CB9BF";
 
-		public string Password
-		{
-			get { return PasswordEncrypt.Decrypt(encryptKey, Salt: "GreenShot"); }
-			set { PasswordEncrypt = value.Encrypt(encryptKey, Salt: "GreenShot"); }
-		}
-		
-		// Not stored, only run-time!
-		public Dictionary<string, TFSInfo> runtimePicasaHistory = new Dictionary<string, TFSInfo>();
 
-		/// <summary>
-		/// Supply values we can't put as defaults
-		/// </summary>
-		/// <param name="property">The property to return a default for</param>
-		/// <returns>object with the default value for the supplied property</returns>
-		public override object GetDefault(string property) {
-			switch(property) {
-				case "PicasaUploadHistory":
-					return new Dictionary<string, string>();
-			}
-			return null;
-		}
-			/// <summary>
-		/// A form for token
-		/// </summary>
-		/// <returns>bool true if OK was pressed, false if cancel</returns>
-		public bool ShowConfigDialog() {
-			SettingsForm settingsForm;
-			ILanguage lang = Language.GetInstance();
+        // Not stored, only run-time!
+        public Dictionary<string, TFSInfo> runtimeTfsHistory = new Dictionary<string, TFSInfo>();
 
-			BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
-			try {
-				settingsForm = new SettingsForm(this);
-			} finally {
-				backgroundForm.CloseDialog();
-			}
-			settingsForm.UploadFormat = this.UploadFormat.ToString();
-			settingsForm.AfterUploadOpenHistory = this.AfterUploadOpenHistory;
-			settingsForm.AfterUploadLinkToClipBoard  = this.AfterUploadLinkToClipBoard;
-			settingsForm.Username = this.Username;
-			settingsForm.Password = this.Password;
-			settingsForm.PictureDefaultSize = this.PictureDisplaySize.ToString();
-			DialogResult result = settingsForm.ShowDialog();
-			if (result == DialogResult.OK)
-			{
+        /// <summary>
+        /// Supply values we can't put as defaults
+        /// </summary>
+        /// <param name="property">The property to return a default for</param>
+        /// <returns>object with the default value for the supplied property</returns>
+        public override object GetDefault(string property)
+        {
+            switch (property)
+            {
+                case "TfsUploadHistory":
+                    return new Dictionary<string, string>();
+            }
+            return null;
+        }
+        /// <summary>
+        /// A form for token
+        /// </summary>
+        /// <returns>bool true if OK was pressed, false if cancel</returns>
+        public bool ShowConfigDialog()
+        {
+            SettingsForm settingsForm;
+            ILanguage lang = Language.GetInstance();
 
-				this.UploadFormat = (OutputFormat)Enum.Parse(typeof(OutputFormat), settingsForm.UploadFormat.ToLower());
-				
-				this.AfterUploadOpenHistory=settingsForm.AfterUploadOpenHistory;
-				this.AfterUploadLinkToClipBoard=settingsForm.AfterUploadLinkToClipBoard;
+            BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
+            try
+            {
+                settingsForm = new SettingsForm(this);
+            }
+            finally
+            {
+                backgroundForm.CloseDialog();
+            }
+            settingsForm.UploadFormat = this.UploadFormat.ToString();
+            settingsForm.AfterUploadOpenHistory = this.AfterUploadOpenHistory;
+            settingsForm.AfterUploadLinkToClipBoard = this.AfterUploadLinkToClipBoard;
+            settingsForm.AfterUploadOpenWorkItem = this.AfterUploadOpenWorkItem;
+            settingsForm.ServerUrl = this.TfsServerUrl;
+            settingsForm.DefaultProject = this.TfsDefaultProject;
+            DialogResult result = settingsForm.ShowDialog();
+            if (result == DialogResult.OK)
+            {
 
-				this.Username=settingsForm.Username;
-				this.Password=settingsForm.Password;
-				this.PictureDisplaySize = (PictureDisplaySize)Enum.Parse(typeof(PictureDisplaySize), settingsForm.PictureDefaultSize);
+                this.UploadFormat = (OutputFormat)Enum.Parse(typeof(OutputFormat), settingsForm.UploadFormat.ToLower());
 
-				IniConfig.Save();
-				return true;
-			}
-			return false;
-		}
+                this.AfterUploadOpenHistory = settingsForm.AfterUploadOpenHistory;
+                this.AfterUploadLinkToClipBoard = settingsForm.AfterUploadLinkToClipBoard;
+                this.AfterUploadOpenWorkItem = settingsForm.AfterUploadOpenWorkItem;
 
-	}
+                this.TfsServerUrl = settingsForm.ServerUrl;
+                this.TfsDefaultProject = settingsForm.DefaultProject;
+
+                IniConfig.Save();
+                return true;
+            }
+            return false;
+        }
+
+    }
 }

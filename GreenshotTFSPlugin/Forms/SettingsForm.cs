@@ -1,6 +1,6 @@
 ﻿/*
  * Greenshot - a free and open source screenshot tool
- * Copyright (C) 2011  Francis Noel
+ * Copyright (C) 2012  Francis Noel
  * 
  * For more information see: http://getgreenshot.org/
  * The Greenshot project is hosted on Sourceforge: http://sourceforge.net/projects/greenshot/
@@ -26,6 +26,8 @@ using Greenshot.Plugin;
 using GreenshotTFSPlugin.Forms;
 using GreenshotPlugin.Controls;
 using GreenshotPlugin.Core;
+using Microsoft.TeamFoundation.Client;
+
 
 namespace GreenshotTFSPlugin {
 	/// <summary>
@@ -33,7 +35,7 @@ namespace GreenshotTFSPlugin {
 	/// </summary>
 	public partial class SettingsForm : Form {
 		private ILanguage lang = Language.GetInstance();
-		private string PicasaFrob = string.Empty;
+		private string TFSFrob = string.Empty;
 
 		public SettingsForm(TFSConfiguration config) {
 			//
@@ -47,15 +49,9 @@ namespace GreenshotTFSPlugin {
 				combobox_uploadimageformat.Items.Add(format.ToString());
 			}
 
-			comboBox_DefaultSize.Items.Clear();
-			foreach (PictureDisplaySize displaySize in Enum.GetValues(typeof(PictureDisplaySize)))
-			{
-				comboBox_DefaultSize.Items.Add(displaySize.ToString());
-			}
-
 			TFSUtils.LoadHistory();
 
-			if (config.runtimePicasaHistory.Count > 0) {
+			if (config.runtimeTfsHistory.Count > 0) {
 				historyButton.Enabled = true;
 			} else {
 				historyButton.Enabled = false;
@@ -69,9 +65,6 @@ namespace GreenshotTFSPlugin {
 			this.Text = lang.GetString(LangKey.settings_title);
 			this.label_upload_format.Text = lang.GetString(LangKey.label_upload_format);
 			this.label_AfterUpload.Text = lang.GetString(LangKey.label_AfterUpload);
-			this.label_UserName.Text = lang.GetString(LangKey.label_Username);
-			this.label_Password.Text = lang.GetString(LangKey.label_Password);
-			this.label_DefaultSize.Text = lang.GetString(LangKey.label_DefaultSize);
 			this.checkboxAfterUploadOpenHistory.Text = lang.GetString(LangKey.label_AfterUploadOpenHistory);
 			this.checkboxAfterUploadLinkToClipBoard.Text = lang.GetString(LangKey.label_AfterUploadLinkToClipBoard);
 		}
@@ -86,28 +79,34 @@ namespace GreenshotTFSPlugin {
 			set { checkboxAfterUploadLinkToClipBoard.Checked = value; }
 		}
 
-
-		public string PictureDefaultSize
+		public bool AfterUploadOpenWorkItem 
 		{
-			get { return comboBox_DefaultSize.Text; }
-			set { comboBox_DefaultSize.Text = value; }
+			get { return checkbox_openWorkItem.Checked; }
+			set { checkbox_openWorkItem.Checked = value; } 
+		}
+
+		/// <summary>
+		/// Tfs server url
+		/// </summary>
+		public string ServerUrl
+		{
+			get { return textbox_tfsUrl.Text; }
+			set { textbox_tfsUrl.Text = value; }
+		}
+
+		/// <summary>
+		/// Tfs default project
+		/// </summary>
+		public string DefaultProject
+		{
+			get { return textbox_defaultProject.Text; }
+			set { textbox_defaultProject.Text = value; }
 		}
 
 		public string UploadFormat
 		{
 			get { return combobox_uploadimageformat.Text; }
 			set { combobox_uploadimageformat.Text = value; }
-		}
-
-		public string Username {
-			get {return textBoxUsername.Text;}
-			set {textBoxUsername.Text = value;}
-		}
-
-		public string Password
-		{
-			get { return textBoxPassword.Text; }
-			set { textBoxPassword.Text = value; }
 		}
 
 		void ButtonOKClick(object sender, EventArgs e)
@@ -121,6 +120,21 @@ namespace GreenshotTFSPlugin {
 		
 		void ButtonHistoryClick(object sender, EventArgs e) {
 			TFSHistory.ShowHistory();
+		}
+
+		private void buttonConnect_Click(object sender, EventArgs e)
+		{
+			//http://blogs.msdn.com/b/team_foundation/archive/2010/04/20/using-the-teamprojectpicker-api-in-tfs-2010.aspx
+			using (TeamProjectPicker tpp = new TeamProjectPicker(TeamProjectPickerMode.SingleProject, false))
+			{
+				DialogResult result = tpp.ShowDialog();
+				if (result == DialogResult.OK)
+				{
+					textbox_tfsUrl.Text= tpp.SelectedTeamProjectCollection.Uri.ToString();
+				   textbox_defaultProject.Text= tpp.SelectedProjects[0].Name;
+					
+				}
+			}
 		}
 
 	}

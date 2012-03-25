@@ -38,7 +38,7 @@ using IniFile;
 namespace GreenshotTFSPlugin
 {
     /// <summary>
-    /// This is the Picasa base code
+    /// This is the TFS base code
     /// </summary>
     public class TFSPlugin : IGreenshotPlugin
     {
@@ -80,9 +80,9 @@ namespace GreenshotTFSPlugin
             resources = new ComponentResourceManager(typeof(TFSPlugin));
 
             ToolStripMenuItem itemPlugInRoot = new ToolStripMenuItem();
-            itemPlugInRoot.Text = "Picasa";
+            itemPlugInRoot.Text = "TFS";
             itemPlugInRoot.Tag = host;
-            itemPlugInRoot.Image = (Image)resources.GetObject("Picasa");
+            //itemPlugInRoot.Image = (Image)resources.GetObject("TFS");
 
              ToolStripMenuItem itemPlugInHistory = new ToolStripMenuItem();
             itemPlugInHistory.Text = lang.GetString(LangKey.History);
@@ -103,7 +103,7 @@ namespace GreenshotTFSPlugin
 
         public virtual void Shutdown()
         {
-            LOG.Debug("Picasa Plugin shutdown.");
+            LOG.Debug("TFS Plugin shutdown.");
             //host.OnImageEditorOpen -= new OnImageEditorOpenHandler(ImageEditorOpened);
         }
 
@@ -122,7 +122,7 @@ namespace GreenshotTFSPlugin
         /// <param name="e"></param>
         public void Closing(object sender, FormClosingEventArgs e)
         {
-            LOG.Debug("Application closing, de-registering Picasa Plugin!");
+            LOG.Debug("Application closing, de-registering TFS Plugin!");
             Shutdown();
         }
 
@@ -141,7 +141,7 @@ namespace GreenshotTFSPlugin
         {
             using (MemoryStream stream = new MemoryStream())
             {
-                BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(Attributes.Name, lang.GetString(LangKey.communication_wait));
+               // BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(Attributes.Name, lang.GetString(LangKey.communication_wait));
 
                 host.SaveToStream(image, stream, config.UploadFormat, config.UploadJpegQuality);
                 byte[] buffer = stream.GetBuffer();
@@ -150,41 +150,47 @@ namespace GreenshotTFSPlugin
                 {
                     string filename = Path.GetFileName(host.GetFilename(config.UploadFormat, captureDetails));
                     string contentType = "image/" + config.UploadFormat.ToString();
-                    TFSInfo picasaInfo = TFSUtils.UploadToPicasa(buffer, captureDetails.DateTime.ToString(), filename, contentType);
-                    if (config.PicasaUploadHistory == null)
+                    TFSInfo tfsInfo = TFSUtils.UploadToTFS(buffer, captureDetails.DateTime.ToString(), filename, contentType);
+                    if (tfsInfo == null)
                     {
-                        config.PicasaUploadHistory = new Dictionary<string, string>();
+                        return false;
                     }
-
-                    if (picasaInfo.ID != null)
+                    else
                     {
-                        LOG.InfoFormat("Storing Picasa upload for id {0}", picasaInfo.ID);
+                        if (config.TfsUploadHistory == null)
+                        {
+                            config.TfsUploadHistory = new Dictionary<string, string>();
+                        }
 
-                        config.PicasaUploadHistory.Add(picasaInfo.ID, picasaInfo.ID);
-                        config.runtimePicasaHistory.Add(picasaInfo.ID, picasaInfo);
+                        if (tfsInfo.ID != null)
+                        {
+                            LOG.InfoFormat("Storing TFS upload for id {0}", tfsInfo.ID);
+
+                            config.TfsUploadHistory.Add(tfsInfo.ID, tfsInfo.ID);
+                            config.runtimeTfsHistory.Add(tfsInfo.ID, tfsInfo);
+                        }
+
+                        // Make sure the configuration is save, so we don't lose the deleteHash
+                        IniConfig.Save();
+                        // Make sure the history is loaded, will be done only once
+                        TFSUtils.LoadHistory();
+
+                        // Show
+                        if (config.AfterUploadOpenHistory)
+                        {
+                            TFSHistory.ShowHistory();
+                        }
+
+                        if (config.AfterUploadLinkToClipBoard)
+                        {
+                            Clipboard.SetText(tfsInfo.WebUrl);
+                        }
+                        if (config.AfterUploadOpenWorkItem)
+                        {
+
+                        }
+                        return true;
                     }
-
-                    picasaInfo.Image = TFSUtils.CreateThumbnail(image, 90, 90);
-                    // Make sure the configuration is save, so we don't lose the deleteHash
-                    IniConfig.Save();
-                    // Make sure the history is loaded, will be done only once
-                    TFSUtils.LoadHistory();
-
-                    // Show
-                    if (config.AfterUploadOpenHistory)
-                    {
-                        TFSHistory.ShowHistory();
-                    }
-
-                    if (config.AfterUploadLinkToClipBoard)
-                    {
-                        Clipboard.SetText(picasaInfo.LinkUrl(config.PictureDisplaySize));
-                    }
-                    return true;
-                }
-                catch (Google.GData.Client.InvalidCredentialsException eLo)
-                {
-                    MessageBox.Show(lang.GetString(LangKey.InvalidCredentials));
                 }
                 catch (Exception e)
                 {
@@ -192,7 +198,7 @@ namespace GreenshotTFSPlugin
                 }
                 finally
                 {
-                    backgroundForm.CloseDialog();
+                    //backgroundForm.CloseDialog();
                 }
             }
             return false;

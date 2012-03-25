@@ -36,10 +36,10 @@
 			Configure
 		</resource>
 		<resource name="upload_menu_item">
-		Upload to Picasa
+		Upload to TFS
 	</resource>
 	<resource name="settings_title">
-		Picasa settings
+		TFS settings
 	</resource>
 		<resource name="OK">
 		OK

@@ -44,33 +44,6 @@ namespace GreenshotTFSPlugin
 			set {title = value;}
 		}
 
-		private DateTime timestamp;
-		public DateTime Timestamp {
-			get {return timestamp;}
-			set {timestamp = value;}
-		}
-
-		private Image image;
-		public Image Image
-		{
-			get { return image; }
-			set
-			{
-				if (image != null)
-				{
-					image.Dispose();
-				}
-				image = value;
-			}
-		}
-
-		private string squareThumbnailUrl;
-		public string SquareThumbnailUrl
-		{
-			get{return this.squareThumbnailUrl;}
-			set{this.squareThumbnailUrl = value;}
-		}
-
 		private string description;
 		public string Description
 		{
@@ -78,46 +51,12 @@ namespace GreenshotTFSPlugin
 			set { this.description = value; }
 		}
 
-		private string originalUrl;
-		public string OriginalUrl
+		private string webUrl;
+		public string WebUrl
 		{
-			get { return this.originalUrl; }
-			set { this.originalUrl = value; }
+			get { return this.webUrl; }
+			set { this.webUrl = value; }
 		}
-
-        private string webUrl;
-        public string WebUrl
-        {
-            get { return this.webUrl; }
-            set { this.webUrl = value; }
-        }
-
-		public string LinkUrl(PictureDisplaySize pictureDisplaySize)
-		{
-			string linkUrl = string.Empty;
-			switch (pictureDisplaySize)
-			{
-				case PictureDisplaySize.WebUrl:
-					linkUrl = this.WebUrl;
-					break;
-				 case PictureDisplaySize.OriginalUrl:
-					linkUrl = this.OriginalUrl;
-					break;
-				case PictureDisplaySize.SquareThumbnailUrl:
-					linkUrl = this.SquareThumbnailUrl;
-					break;
-				default:
-					linkUrl = this.WebUrl;
-					break;
-			}
-			if (string.IsNullOrEmpty(linkUrl))
-			{
-				linkUrl = this.WebUrl;
-			}
-
-			return linkUrl;
-		}
-
 
 	public TFSInfo() {
 		}
@@ -137,14 +76,7 @@ namespace GreenshotTFSPlugin
 		/// </summary>
 		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing) {
-			if (disposing)
-			{
-				if (image != null)
-				{
-					image.Dispose();
-				}
-			}
-			image = null;
+			
 		}
 	}
 }
