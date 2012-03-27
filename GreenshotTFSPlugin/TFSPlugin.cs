@@ -187,7 +187,7 @@ namespace GreenshotTFSPlugin
                         }
                         if (config.AfterUploadOpenWorkItem)
                         {
-
+                            System.Diagnostics.Process.Start(tfsInfo.WebUrl);
                         }
                         return true;
                     }

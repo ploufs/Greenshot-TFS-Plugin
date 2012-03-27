@@ -56,6 +56,27 @@ namespace GreenshotTFSPlugin
         [IniProperty("TfsDefaultProject", Description = "Tfs default project", DefaultValue = "")]
         public string TfsDefaultProject;
 
+        [IniProperty("TfsWorkItemType", Description = "Tfs last work item type", DefaultValue = "Bug")]
+        public string TfsWorkItemType;
+
+        [IniProperty("TfsState", Description = "Tfs last state", DefaultValue = "Open")]
+        public string TfsState;
+
+        [IniProperty("TfsAssignedTo", Description = "Tfs last AssignedTo", DefaultValue = "")]
+        public string TfsAssignedTo;
+
+        [IniProperty("TfsAreaPath", Description = "Tfs last area path", DefaultValue = "")]
+        public string TfsAreaPath;
+
+        [IniProperty("TfsIterationPath", Description = "Tfs last iteration path", DefaultValue = "")]
+        public string TfsIterationPath;
+
+        [IniProperty("TfsSeverity", Description = "Tfs last severity", DefaultValue = "")]
+        public string TfsSeverity;
+
+        [IniProperty("TfsPriority", Description = "Tfs last priority", DefaultValue = "1")]
+        public int TfsPriority;
+
         [IniProperty("TfsUploadHistory", Description = "TFS upload history (TFSUploadHistory.hash=deleteHash)")]
         public Dictionary<string, string> TfsUploadHistory;
 

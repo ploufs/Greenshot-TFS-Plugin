@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddForm));
             this.label2 = new System.Windows.Forms.Label();
             this.textbox_defaultProject = new System.Windows.Forms.TextBox();
             this.buttonConnect = new System.Windows.Forms.Button();
@@ -43,7 +44,6 @@
             this.combobox_AreaPath = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.combobox_severity = new System.Windows.Forms.ComboBox();
-            this.textbox_Priority = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.combobox_IterationPath = new System.Windows.Forms.ComboBox();
@@ -52,6 +52,8 @@
             this.button_save = new System.Windows.Forms.Button();
             this.textbox_description = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.textbox_Priority = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.textbox_Priority)).BeginInit();
             this.SuspendLayout();
             // 
             // label2
@@ -199,14 +201,6 @@
             this.combobox_severity.Size = new System.Drawing.Size(513, 21);
             this.combobox_severity.TabIndex = 16;
             // 
-            // textbox_Priority
-            // 
-            this.textbox_Priority.Location = new System.Drawing.Point(104, 226);
-            this.textbox_Priority.Name = "textbox_Priority";
-            this.textbox_Priority.Size = new System.Drawing.Size(55, 20);
-            this.textbox_Priority.TabIndex = 18;
-            this.textbox_Priority.Text = "1";
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -289,11 +283,24 @@
             this.label10.TabIndex = 21;
             this.label10.Text = "Description";
             // 
+            // textbox_Priority
+            // 
+            this.textbox_Priority.Location = new System.Drawing.Point(104, 227);
+            this.textbox_Priority.Name = "textbox_Priority";
+            this.textbox_Priority.Size = new System.Drawing.Size(89, 20);
+            this.textbox_Priority.TabIndex = 18;
+            this.textbox_Priority.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // AddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(633, 386);
+            this.Controls.Add(this.textbox_Priority);
             this.Controls.Add(this.textbox_description);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.button_save);
@@ -301,7 +308,6 @@
             this.Controls.Add(this.combobox_state);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.combobox_IterationPath);
-            this.Controls.Add(this.textbox_Priority);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.combobox_severity);
@@ -318,8 +324,10 @@
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textbox_tfsUrl);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AddForm";
             this.Text = "Add work item";
+            ((System.ComponentModel.ISupportInitialize)(this.textbox_Priority)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -342,7 +350,6 @@
         private System.Windows.Forms.ComboBox combobox_AreaPath;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox combobox_severity;
-        private System.Windows.Forms.TextBox textbox_Priority;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox combobox_IterationPath;
@@ -351,5 +358,6 @@
         private System.Windows.Forms.Button button_save;
         private System.Windows.Forms.TextBox textbox_description;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown textbox_Priority;
     }
 }
