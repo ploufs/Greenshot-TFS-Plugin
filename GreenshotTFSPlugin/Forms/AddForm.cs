@@ -25,6 +25,8 @@
             }
 
             this.BindScreen();
+
+          
         }
 
         public TFSInfo TFSInfo { get; set; }
@@ -59,6 +61,9 @@
 
         private void button_save_Click(object sender, EventArgs e)
         {
+            try
+            {
+
             ////http://social.technet.microsoft.com/wiki/contents/articles/3280.tfs-2010-api-create-workitems-bugs.aspx
             TfsTeamProjectCollection tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text));
 
@@ -70,6 +75,7 @@
 
             // Assign values to each mandatory field
             var workItem = new WorkItem(workItemType);
+
 
             workItem.Title = textbox_title.Text;
             workItem.Description = textbox_description.Text;
@@ -102,11 +108,12 @@
             }
 
             // add image
-            StreamWriter imgWrite = new StreamWriter(this.Filename);
+            string tempFile = Path.Combine(Environment.CurrentDirectory, this.Filename);
+            StreamWriter imgWrite = new StreamWriter(tempFile);
             imgWrite.Write(this.ImageData);
             imgWrite.Dispose();
 
-            workItem.Attachments.Add(new Attachment(this.Filename));
+            workItem.Attachments.Add(new Attachment(tempFile));
 
             // Link the failed test case to the Bug
             // workItem.Links.Add(new RelatedLink(testcaseID));
@@ -140,7 +147,18 @@
             this.TFSInfo.Title = workItem.Title;
             this.TFSInfo.Description = workItem.Description;
             this.TFSInfo.WebUrl = workItem.Uri.ToString();
+
+            //delete temps images
+            System.IO.File.Delete(tempFile);
+
             DialogResult = DialogResult.OK;
+            }
+            catch (Exception eError)
+            {
+
+                MessageBox.Show(eError.ToString());
+            }
+            
         }
 
         /// <summary>
@@ -153,12 +171,21 @@
             using (var tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text)))
             {
                 WorkItemStore workItemStore = (WorkItemStore)tfs.GetService(typeof(WorkItemStore));
-                var allowedValues = workItemStore.FieldDefinitions[coreField].AllowedValues;
 
-                comboBox.Items.Clear();
-                foreach (string value in allowedValues)
+                Project project = workItemStore.Projects[this.textbox_defaultProject.Text];
+
+                // workType
+                WorkItemTypeCollection workItemTypes = project.WorkItemTypes;
+
+                WorkItemType workItemType = workItemTypes[combobox_workItemType.Text];
+                if (workItemType != null)
                 {
-                    comboBox.Items.Add(value);
+                    var allowedValues = workItemType.FieldDefinitions[coreField].AllowedValues;
+                    comboBox.Items.Clear();
+                    foreach (string value in allowedValues)
+                    {
+                        comboBox.Items.Add(value);
+                    }
                 }
             }
         }
@@ -219,6 +246,7 @@
                     }
 
                     combobox_workItemType.SelectedValue = config.TfsWorkItemType;
+                    BindScreenByItemType();
 
                     // area
                     combobox_AreaPath.Items.Clear();
@@ -243,21 +271,32 @@
                             combobox_IterationPath.Items.Add(item.Name);
                         }
                     }
-
+                    
                     combobox_IterationPath.SelectedValue = config.TfsIterationPath;
-
-                    this.BindComboBox(combobox_AssignTo, CoreField.AssignedTo);
-                    combobox_AssignTo.SelectedValue = config.TfsAssignedTo;
-
-                    // this.bindComboBox(combobox_severity,CoreField.se);
-                    combobox_severity.SelectedValue = config.TfsSeverity;
-
-                    this.BindComboBox(combobox_state, CoreField.State);
-                    combobox_state.SelectedValue = config.TfsState;
 
                     textbox_Priority.Value = config.TfsPriority;
                 }
             }
         }
+
+        private void BindScreenByItemType()
+        {
+
+            this.BindComboBox(combobox_AssignTo, CoreField.AssignedTo);
+            combobox_AssignTo.SelectedValue = config.TfsAssignedTo;
+
+            // this.bindComboBox(combobox_severity,CoreField.se);
+            combobox_severity.SelectedValue = config.TfsSeverity;
+
+            this.BindComboBox(combobox_state, CoreField.State);
+            combobox_state.SelectedValue = config.TfsState;
+
+        }
+
+        private void combobox_workItemType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BindScreenByItemType();
+        }
+
     }
 }

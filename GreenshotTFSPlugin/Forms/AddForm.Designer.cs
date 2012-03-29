@@ -122,6 +122,7 @@
             this.combobox_workItemType.Name = "combobox_workItemType";
             this.combobox_workItemType.Size = new System.Drawing.Size(513, 21);
             this.combobox_workItemType.TabIndex = 6;
+            this.combobox_workItemType.SelectedIndexChanged += new System.EventHandler(this.combobox_workItemType_SelectedIndexChanged);
             // 
             // label3
             // 
