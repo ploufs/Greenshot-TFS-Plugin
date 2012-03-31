@@ -31,6 +31,7 @@ using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using GreenshotTFSPlugin.Forms;
 using System.Windows.Forms;
+using GreenshotPlugin.Controls;
 
 namespace GreenshotTFSPlugin {
 	/// <summary>
@@ -97,7 +98,17 @@ namespace GreenshotTFSPlugin {
 		/// <returns>TFSResponse</returns>
 		public static TFSInfo UploadToTFS(byte[] imageData, string title, string filename, string contentType)
 		{
-			AddForm addForm = new AddForm();
+			ILanguage lang = Language.GetInstance();
+			BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
+			AddForm addForm = null;
+			try
+			{
+				addForm = new AddForm();
+			}
+			finally
+			{
+				backgroundForm.CloseDialog();
+			}
 			addForm.ImageData = imageData;
 			addForm.Title = title;
 			addForm.Filename = filename;

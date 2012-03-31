@@ -77,6 +77,9 @@ namespace GreenshotTFSPlugin
         [IniProperty("TfsPriority", Description = "Tfs last priority", DefaultValue = "1")]
         public int TfsPriority;
 
+         [IniProperty("TfsReason", Description = "Tfs last reason", DefaultValue = "")]
+        public string TfsReason;
+
         [IniProperty("TfsUploadHistory", Description = "TFS upload history (TFSUploadHistory.hash=deleteHash)")]
         public Dictionary<string, string> TfsUploadHistory;
 
@@ -142,5 +145,7 @@ namespace GreenshotTFSPlugin
             return false;
         }
 
+
+     
     }
 }

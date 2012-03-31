@@ -3,7 +3,11 @@
     using System;
     using System.Collections;
     using System.IO;
+    using System.Net;
+    using System.Text;
     using System.Windows.Forms;
+    using GreenshotPlugin.Controls;
+    using GreenshotPlugin.Core;
     using IniFile;
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -26,7 +30,23 @@
 
             this.BindScreen();
 
-          
+            // genereate system info
+            StringBuilder systemInfo = new StringBuilder();
+
+            OperatingSystem os = Environment.OSVersion;
+            systemInfo.AppendFormat("OS Version : {0}{1}", os.VersionString.ToString(), Environment.NewLine);
+            systemInfo.AppendFormat("Computer name : {0}{1}", SystemInformation.ComputerName, Environment.NewLine);
+            systemInfo.AppendFormat("Monitor count : {0}{1}", SystemInformation.MonitorCount, Environment.NewLine);
+            systemInfo.AppendFormat("Monitors same display format : {0}{1}", SystemInformation.MonitorsSameDisplayFormat, Environment.NewLine);
+            systemInfo.AppendFormat("Primary monitor size : {0} x {1} {2}", SystemInformation.PrimaryMonitorSize.Height.ToString(), SystemInformation.PrimaryMonitorSize.Width.ToString(), Environment.NewLine);
+            systemInfo.AppendFormat("Terminal server session : {0}{1}", SystemInformation.TerminalServerSession, Environment.NewLine);
+            systemInfo.AppendFormat("Working Area : {0} X {1} {2}", SystemInformation.WorkingArea.Height.ToString(), SystemInformation.WorkingArea.Width.ToString(), Environment.NewLine);
+
+            WebBrowser browser = new WebBrowser();
+            systemInfo.AppendFormat("Internet explorer version : {0}{1}", browser.Version, SystemInformation.WorkingArea.Width.ToString(), Environment.NewLine);
+            browser.Dispose();
+
+            textbox_SystemInfo.Text = systemInfo.ToString();
         }
 
         public TFSInfo TFSInfo { get; set; }
@@ -54,7 +74,18 @@
                     textbox_tfsUrl.Text = tpp.SelectedTeamProjectCollection.Uri.ToString();
                     textbox_defaultProject.Text = tpp.SelectedProjects[0].Name;
                     button_save.Enabled = true;
-                    this.BindScreen();
+
+                    ILanguage lang = Language.GetInstance();
+                    BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
+
+                    try
+                    {
+                        this.BindScreen();
+                    }
+                    finally
+                    {
+                        backgroundForm.CloseDialog();
+                    }
                 }
             }
         }
@@ -63,102 +94,119 @@
         {
             try
             {
+                ////http://social.technet.microsoft.com/wiki/contents/articles/3280.tfs-2010-api-create-workitems-bugs.aspx
+                TfsTeamProjectCollection tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text));
 
-            ////http://social.technet.microsoft.com/wiki/contents/articles/3280.tfs-2010-api-create-workitems-bugs.aspx
-            TfsTeamProjectCollection tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text));
+                WorkItemStore workItemStore = (WorkItemStore)tfs.GetService(typeof(WorkItemStore));
 
-            WorkItemStore workItemStore = (WorkItemStore)tfs.GetService(typeof(WorkItemStore));
+                WorkItemTypeCollection workItemTypes = workItemStore.Projects[this.textbox_defaultProject.Text].WorkItemTypes;
 
-            WorkItemTypeCollection workItemTypes = workItemStore.Projects[this.textbox_defaultProject.Text].WorkItemTypes;
+                WorkItemType workItemType = workItemTypes[combobox_workItemType.Text];
 
-            WorkItemType workItemType = workItemTypes[combobox_workItemType.Text];
+                // Assign values to each mandatory field
+                var workItem = new WorkItem(workItemType);
 
-            // Assign values to each mandatory field
-            var workItem = new WorkItem(workItemType);
-
-
-            workItem.Title = textbox_title.Text;
-            workItem.Description = textbox_description.Text;
-
-            if (combobox_AssignTo.SelectedItem != null)
-            {
-                workItem.Fields["System.AssignedTo"].Value = combobox_AssignTo.Text;
-            }
-
-            if (combobox_severity.SelectedItem != null)
-            {
-                workItem.Fields["Microsoft.VSTS.Common.Severity"].Value = combobox_severity.Text;
-            }
-
-            workItem.Fields["Microsoft.VSTS.Common.Priority"].Value = textbox_Priority.Text;
-
-            if (combobox_AreaPath.SelectedItem != null)
-            {
-                workItem.AreaPath = combobox_AreaPath.Text;
-            }
-
-            if (combobox_IterationPath.SelectedItem != null)
-            {
-                workItem.IterationPath = combobox_IterationPath.Text;
-            }
-
-            if (combobox_state.SelectedItem != null)
-            {
-                workItem.Fields["System.State"].Value = combobox_state.Text;
-            }
-
-            // add image
-            string tempFile = Path.Combine(Environment.CurrentDirectory, this.Filename);
-            StreamWriter imgWrite = new StreamWriter(tempFile);
-            imgWrite.Write(this.ImageData);
-            imgWrite.Dispose();
-
-            workItem.Attachments.Add(new Attachment(tempFile));
-
-            // Link the failed test case to the Bug
-            // workItem.Links.Add(new RelatedLink(testcaseID));
-
-            // Check for validation errors before saving the Bug
-            ArrayList validationErrors = workItem.Validate();
-
-            if (validationErrors.Count == 0)
-            {
-                workItem.Save();
-            }
-            else
-            {
-                string errrorMsg = "Validation Error in field\n";
-                foreach (Field field in validationErrors)
+                foreach (Field item in workItem.Fields)
                 {
-                    errrorMsg += field.ReferenceName + "\n";
+                    MessageBox.Show(item.Name);
+                    MessageBox.Show(item.ReferenceName);
                 }
 
-                MessageBox.Show(errrorMsg);
-            }
+                workItem.Title = textbox_title.Text;
+                workItem.Description = textbox_description.Text;
 
-            tfs.Dispose();
+                if (combobox_AssignTo.SelectedItem != null)
+                {
+                    workItem.Fields["System.AssignedTo"].Value = combobox_AssignTo.Text;
+                }
 
-            if (this.TFSInfo == null)
-            {
-                this.TFSInfo = new TFSInfo();
-            }
+                if (combobox_severity.SelectedItem != null)
+                {
+                    workItem.Fields["Microsoft.VSTS.Common.Severity"].Value = combobox_severity.Text;
+                }
 
-            this.TFSInfo.ID = workItem.Id.ToString();
-            this.TFSInfo.Title = workItem.Title;
-            this.TFSInfo.Description = workItem.Description;
-            this.TFSInfo.WebUrl = workItem.Uri.ToString();
+                workItem.Fields["Microsoft.VSTS.Common.Priority"].Value = textbox_Priority.Text;
 
-            //delete temps images
-            System.IO.File.Delete(tempFile);
+                if (combobox_AreaPath.SelectedItem != null)
+                {
+                    workItem.AreaPath = combobox_AreaPath.Text;
+                }
 
-            DialogResult = DialogResult.OK;
+                if (combobox_IterationPath.SelectedItem != null)
+                {
+                    workItem.IterationPath = combobox_IterationPath.Text;
+                }
+
+                if (combobox_state.SelectedItem != null)
+                {
+                    workItem.Fields["System.State"].Value = combobox_state.Text;
+                }
+
+                if (combobox_reason.SelectedItem != null)
+                {
+                    workItem.Fields["System.Reason"].Value = combobox_reason.Text;
+                }
+
+                if (workItem.Fields.Contains("Microsoft.VSTS.TCM.SystemInfo"))
+                {
+                    workItem.Fields["Microsoft.VSTS.TCM.SystemInfo"].Value = textbox_ReproStep.Text;
+                }
+
+                if (workItem.Fields.Contains("Microsoft.VSTS.TCM.ReproStreps"))
+                {
+                    workItem.Fields["Microsoft.VSTS.TCS.ReproStreps"].Value = textbox_SystemInfo.Text;
+                }
+
+                // add image
+                string tempFile = Path.Combine(Environment.CurrentDirectory, this.Filename);
+                File.WriteAllBytes(tempFile, this.ImageData);
+
+                workItem.Attachments.Add(new Attachment(tempFile));
+
+                // Link the failed test case to the Bug
+                // workItem.Links.Add(new RelatedLink(testcaseID));
+
+                // Check for validation errors before saving the Bug
+                ArrayList validationErrors = workItem.Validate();
+
+                if (validationErrors.Count == 0)
+                {
+                    // workItem.Save();
+
+                    if (this.TFSInfo == null)
+                    {
+                        this.TFSInfo = new TFSInfo();
+                    }
+
+                    this.TFSInfo.ID = workItem.Id.ToString();
+                    this.TFSInfo.Title = workItem.Title;
+                    this.TFSInfo.Description = workItem.Description;
+                    this.TFSInfo.WebUrl = workItem.Uri.ToString();
+
+
+                    this.SetLastValue();
+                    DialogResult = DialogResult.OK;
+                }
+                else
+                {
+                    string errrorMsg = "Validation Error in field\n";
+                    foreach (Field field in validationErrors)
+                    {
+                        errrorMsg += field.ReferenceName + "\n";
+                    }
+
+                    MessageBox.Show(errrorMsg);
+                }
+
+                tfs.Dispose();
+
+                // delete temps images
+                System.IO.File.Delete(tempFile);
             }
             catch (Exception eError)
             {
-
                 MessageBox.Show(eError.ToString());
             }
-            
         }
 
         /// <summary>
@@ -173,6 +221,7 @@
                 WorkItemStore workItemStore = (WorkItemStore)tfs.GetService(typeof(WorkItemStore));
 
                 Project project = workItemStore.Projects[this.textbox_defaultProject.Text];
+
 
                 // workType
                 WorkItemTypeCollection workItemTypes = project.WorkItemTypes;
@@ -222,9 +271,14 @@
                 config.TfsState = combobox_state.Text;
             }
 
-            if (combobox_workItemType != null)
+            if (combobox_workItemType.SelectedItem != null)
             {
                 config.TfsWorkItemType = combobox_workItemType.Text;
+            }
+
+            if (combobox_workItemType.SelectedItem != null)
+            {
+                config.TfsReason = combobox_reason.Text;
             }
         }
 
@@ -232,71 +286,119 @@
         {
             if (!string.IsNullOrEmpty(this.textbox_tfsUrl.Text))
             {
-                using (var tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text)))
+                try
                 {
-                    WorkItemStore workItemStore = (WorkItemStore)tfs.GetService(typeof(WorkItemStore));
-                    Project project = workItemStore.Projects[this.textbox_defaultProject.Text];
-
-                    // workType
-                    WorkItemTypeCollection workItemTypes = project.WorkItemTypes;
-                    combobox_workItemType.Items.Clear();
-                    foreach (WorkItemType workItemType in workItemTypes)
+                    using (var tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text)))
                     {
-                        combobox_workItemType.Items.Add(workItemType.Name);
-                    }
+                        WorkItemStore workItemStore = (WorkItemStore)tfs.GetService(typeof(WorkItemStore));
+                        Project project = workItemStore.Projects[this.textbox_defaultProject.Text];
 
-                    combobox_workItemType.SelectedValue = config.TfsWorkItemType;
-                    BindScreenByItemType();
-
-                    // area
-                    combobox_AreaPath.Items.Clear();
-                    foreach (Node area in project.AreaRootNodes)
-                    {
-                        combobox_AreaPath.Items.Add(area.Name);
-                        foreach (Node item in area.ChildNodes)
+                        // workType
+                        WorkItemTypeCollection workItemTypes = project.WorkItemTypes;
+                        combobox_workItemType.Items.Clear();
+                        foreach (WorkItemType workItemType in workItemTypes)
                         {
-                            combobox_AreaPath.Items.Add(item.Name);
+                            combobox_workItemType.Items.Add(workItemType.Name);
                         }
-                    }
 
-                    combobox_AreaPath.SelectedValue = config.TfsAreaPath;
-
-                    // iteration
-                    combobox_IterationPath.Items.Clear();
-                    foreach (Node node in project.IterationRootNodes)
-                    {
-                        combobox_IterationPath.Items.Add(node.Name);
-                        foreach (Node item in node.ChildNodes)
+                        combobox_workItemType.SelectedValue = config.TfsWorkItemType;
+                        if (combobox_workItemType.SelectedItem == null)
                         {
-                            combobox_IterationPath.Items.Add(item.Name);
+                            combobox_workItemType.SelectedIndex = 0;
                         }
-                    }
-                    
-                    combobox_IterationPath.SelectedValue = config.TfsIterationPath;
 
-                    textbox_Priority.Value = config.TfsPriority;
+                        this.BindScreenByItemType();
+
+                        // area
+                        combobox_AreaPath.Items.Clear();
+                        combobox_AreaPath.Items.Add(project.Name);
+                        this.BindComboBoxTree(combobox_AreaPath, project.Name, project.AreaRootNodes);
+                        combobox_AreaPath.SelectedValue = config.TfsAreaPath;
+                        if (combobox_AreaPath.SelectedItem == null && combobox_AreaPath.Items.Count > 0)
+                        {
+                            combobox_AreaPath.SelectedIndex = 0;
+                        }
+
+                        // iteration
+                        combobox_IterationPath.Items.Clear();
+                        combobox_IterationPath.Items.Add(project.Name);
+                        this.BindComboBoxTree(combobox_IterationPath, project.Name, project.IterationRootNodes);
+                        combobox_IterationPath.SelectedValue = config.TfsIterationPath;
+                        if (combobox_IterationPath.SelectedItem == null && combobox_IterationPath.Items.Count > 0)
+                        {
+                            combobox_IterationPath.SelectedIndex = 0;
+                        }
+
+                        textbox_Priority.Value = config.TfsPriority;
+                    }
+                }
+                catch (Microsoft.TeamFoundation.TeamFoundationServerUnauthorizedException eError)
+                {
+                    MessageBox.Show("Login fail");
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Lood child and create combobox item
+        /// </summary>
+        /// <param name="parentTitle"></param>
+        /// <param name="parentNode"></param>
+        /// <param name="nodeCollection"></param>
+        private void BindComboBoxTree(ComboBox combobox, string parentTitle, NodeCollection nodeCollection)
+        {
+            foreach (Node item in nodeCollection)
+            {
+                if (!string.IsNullOrEmpty(item.Name))
+                {
+                    string itemText = parentTitle + "/" + item.Name;
+                    combobox.Items.Add(itemText);
+                    this.BindComboBoxTree(combobox, itemText, item.ChildNodes);
                 }
             }
         }
 
         private void BindScreenByItemType()
         {
-
             this.BindComboBox(combobox_AssignTo, CoreField.AssignedTo);
             combobox_AssignTo.SelectedValue = config.TfsAssignedTo;
 
             // this.bindComboBox(combobox_severity,CoreField.se);
             combobox_severity.SelectedValue = config.TfsSeverity;
+            if (combobox_severity.SelectedItem == null && combobox_severity.Items.Count > 0)
+            {
+                combobox_severity.SelectedIndex = 0;
+            }
 
             this.BindComboBox(combobox_state, CoreField.State);
             combobox_state.SelectedValue = config.TfsState;
+            if (combobox_state.SelectedItem == null && combobox_state.Items.Count > 0)
+            {
+                combobox_state.SelectedIndex = 0;
+            }
 
+            this.BindComboBox(combobox_reason, CoreField.Reason);
+            combobox_reason.SelectedValue = config.TfsState;
+            if (combobox_reason.SelectedItem == null && combobox_reason.Items.Count > 0)
+            {
+                combobox_reason.SelectedIndex = 0;
+            }
         }
 
         private void combobox_workItemType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            BindScreenByItemType();
-        }
+            ILanguage lang = Language.GetInstance();
+            BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
 
+            try
+            {
+                this.BindScreenByItemType();
+            }
+            finally
+            {
+                backgroundForm.CloseDialog();
+            }
+        }
     }
 }

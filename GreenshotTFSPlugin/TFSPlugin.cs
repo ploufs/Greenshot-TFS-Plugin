@@ -141,8 +141,7 @@ namespace GreenshotTFSPlugin
         {
             using (MemoryStream stream = new MemoryStream())
             {
-               // BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(Attributes.Name, lang.GetString(LangKey.communication_wait));
-
+              
                 host.SaveToStream(image, stream, config.UploadFormat, config.UploadJpegQuality);
                 byte[] buffer = stream.GetBuffer();
 
@@ -181,11 +180,11 @@ namespace GreenshotTFSPlugin
                             TFSHistory.ShowHistory();
                         }
 
-                        if (config.AfterUploadLinkToClipBoard)
+                        if (config.AfterUploadLinkToClipBoard && ! string.IsNullOrEmpty(tfsInfo.WebUrl))
                         {
                             Clipboard.SetText(tfsInfo.WebUrl);
                         }
-                        if (config.AfterUploadOpenWorkItem)
+                        if (config.AfterUploadOpenWorkItem && !string.IsNullOrEmpty(tfsInfo.WebUrl))
                         {
                             System.Diagnostics.Process.Start(tfsInfo.WebUrl);
                         }
