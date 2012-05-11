@@ -106,12 +106,6 @@
                 // Assign values to each mandatory field
                 var workItem = new WorkItem(workItemType);
 
-                foreach (Field item in workItem.Fields)
-                {
-                    MessageBox.Show(item.Name);
-                    MessageBox.Show(item.ReferenceName);
-                }
-
                 workItem.Title = textbox_title.Text;
                 workItem.Description = textbox_description.Text;
 
