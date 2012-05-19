@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddForm));
             this.label2 = new System.Windows.Forms.Label();
             this.textbox_defaultProject = new System.Windows.Forms.TextBox();
@@ -53,19 +54,25 @@
             this.textbox_description = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.textbox_Priority = new System.Windows.Forms.NumericUpDown();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControl_Field = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.textbox_SystemInfo = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.textbox_ReproStep = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
+            this.checkbox_description_addImage = new System.Windows.Forms.CheckBox();
             this.combobox_reason = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkbox_reproStep_AddImage = new System.Windows.Forms.CheckBox();
+            this.textbox_ReproStep = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.textbox_SystemInfo = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.tooltip_Main = new System.Windows.Forms.ToolTip(this.components);
+            this.statustrip_main = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel_main = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.textbox_Priority)).BeginInit();
-            this.tabControl1.SuspendLayout();
+            this.tabControl_Field.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.statustrip_main.SuspendLayout();
             this.SuspendLayout();
             // 
             // label2
@@ -135,6 +142,8 @@
             this.combobox_workItemType.Size = new System.Drawing.Size(513, 21);
             this.combobox_workItemType.TabIndex = 6;
             this.combobox_workItemType.SelectedIndexChanged += new System.EventHandler(this.combobox_workItemType_SelectedIndexChanged);
+            this.combobox_workItemType.Enter += new System.EventHandler(this.control_Enter);
+            this.combobox_workItemType.Leave += new System.EventHandler(this.control_Leave);
             // 
             // label3
             // 
@@ -155,6 +164,9 @@
             this.combobox_AssignTo.Name = "combobox_AssignTo";
             this.combobox_AssignTo.Size = new System.Drawing.Size(497, 21);
             this.combobox_AssignTo.TabIndex = 5;
+            this.combobox_AssignTo.Tag = "System.AssignedTo";
+            this.combobox_AssignTo.Enter += new System.EventHandler(this.control_Enter);
+            this.combobox_AssignTo.Leave += new System.EventHandler(this.control_Leave);
             // 
             // label4
             // 
@@ -173,6 +185,8 @@
             this.textbox_title.Name = "textbox_title";
             this.textbox_title.Size = new System.Drawing.Size(497, 20);
             this.textbox_title.TabIndex = 11;
+            this.textbox_title.Enter += new System.EventHandler(this.control_Enter);
+            this.textbox_title.Leave += new System.EventHandler(this.control_Leave);
             // 
             // label5
             // 
@@ -193,6 +207,8 @@
             this.combobox_AreaPath.Name = "combobox_AreaPath";
             this.combobox_AreaPath.Size = new System.Drawing.Size(497, 21);
             this.combobox_AreaPath.TabIndex = 7;
+            this.combobox_AreaPath.Enter += new System.EventHandler(this.control_Enter);
+            this.combobox_AreaPath.Leave += new System.EventHandler(this.control_Leave);
             // 
             // label6
             // 
@@ -213,6 +229,9 @@
             this.combobox_severity.Name = "combobox_severity";
             this.combobox_severity.Size = new System.Drawing.Size(488, 21);
             this.combobox_severity.TabIndex = 1;
+            this.combobox_severity.Tag = "Microsoft.VSTS.Common.Severity";
+            this.combobox_severity.Enter += new System.EventHandler(this.control_Enter);
+            this.combobox_severity.Leave += new System.EventHandler(this.control_Leave);
             // 
             // label7
             // 
@@ -242,6 +261,8 @@
             this.combobox_IterationPath.Name = "combobox_IterationPath";
             this.combobox_IterationPath.Size = new System.Drawing.Size(497, 21);
             this.combobox_IterationPath.TabIndex = 9;
+            this.combobox_IterationPath.Enter += new System.EventHandler(this.control_Enter);
+            this.combobox_IterationPath.Leave += new System.EventHandler(this.control_Leave);
             // 
             // label9
             // 
@@ -262,12 +283,15 @@
             this.combobox_state.Name = "combobox_state";
             this.combobox_state.Size = new System.Drawing.Size(497, 21);
             this.combobox_state.TabIndex = 1;
+            this.combobox_state.Tag = "System.State";
+            this.combobox_state.Enter += new System.EventHandler(this.control_Enter);
+            this.combobox_state.Leave += new System.EventHandler(this.control_Leave);
             // 
             // button_save
             // 
             this.button_save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_save.Enabled = false;
-            this.button_save.Location = new System.Drawing.Point(542, 414);
+            this.button_save.Location = new System.Drawing.Point(542, 396);
             this.button_save.Name = "button_save";
             this.button_save.Size = new System.Drawing.Size(75, 23);
             this.button_save.TabIndex = 23;
@@ -284,8 +308,11 @@
             this.textbox_description.Multiline = true;
             this.textbox_description.Name = "textbox_description";
             this.textbox_description.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textbox_description.Size = new System.Drawing.Size(497, 103);
+            this.textbox_description.Size = new System.Drawing.Size(497, 88);
             this.textbox_description.TabIndex = 13;
+            this.textbox_description.Tag = "System.Description";
+            this.textbox_description.Enter += new System.EventHandler(this.control_Enter);
+            this.textbox_description.Leave += new System.EventHandler(this.control_Leave);
             // 
             // label10
             // 
@@ -302,27 +329,31 @@
             this.textbox_Priority.Name = "textbox_Priority";
             this.textbox_Priority.Size = new System.Drawing.Size(89, 20);
             this.textbox_Priority.TabIndex = 3;
+            this.textbox_Priority.Tag = "Microsoft.VSTS.Common.Priority";
             this.textbox_Priority.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
+            this.textbox_Priority.Enter += new System.EventHandler(this.control_Enter);
+            this.textbox_Priority.Leave += new System.EventHandler(this.control_Leave);
             // 
-            // tabControl1
+            // tabControl_Field
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabControl_Field.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(12, 93);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(609, 315);
-            this.tabControl1.TabIndex = 24;
+            this.tabControl_Field.Controls.Add(this.tabPage1);
+            this.tabControl_Field.Controls.Add(this.tabPage2);
+            this.tabControl_Field.Location = new System.Drawing.Point(12, 93);
+            this.tabControl_Field.Name = "tabControl_Field";
+            this.tabControl_Field.SelectedIndex = 0;
+            this.tabControl_Field.Size = new System.Drawing.Size(609, 297);
+            this.tabControl_Field.TabIndex = 24;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.checkbox_description_addImage);
             this.tabPage1.Controls.Add(this.combobox_reason);
             this.tabPage1.Controls.Add(this.label13);
             this.tabPage1.Controls.Add(this.label9);
@@ -340,69 +371,22 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(601, 289);
+            this.tabPage1.Size = new System.Drawing.Size(601, 271);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // checkbox_description_addImage
             // 
-            this.tabPage2.Controls.Add(this.textbox_ReproStep);
-            this.tabPage2.Controls.Add(this.label12);
-            this.tabPage2.Controls.Add(this.textbox_SystemInfo);
-            this.tabPage2.Controls.Add(this.label11);
-            this.tabPage2.Controls.Add(this.combobox_severity);
-            this.tabPage2.Controls.Add(this.textbox_Priority);
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Controls.Add(this.label7);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(601, 289);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Custom";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // textbox_SystemInfo
-            // 
-            this.textbox_SystemInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textbox_SystemInfo.Location = new System.Drawing.Point(98, 72);
-            this.textbox_SystemInfo.Multiline = true;
-            this.textbox_SystemInfo.Name = "textbox_SystemInfo";
-            this.textbox_SystemInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textbox_SystemInfo.Size = new System.Drawing.Size(497, 109);
-            this.textbox_SystemInfo.TabIndex = 5;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(3, 75);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(61, 13);
-            this.label11.TabIndex = 4;
-            this.label11.Text = "System info";
-            // 
-            // textbox_ReproStep
-            // 
-            this.textbox_ReproStep.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textbox_ReproStep.Location = new System.Drawing.Point(98, 187);
-            this.textbox_ReproStep.Multiline = true;
-            this.textbox_ReproStep.Name = "textbox_ReproStep";
-            this.textbox_ReproStep.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textbox_ReproStep.Size = new System.Drawing.Size(497, 96);
-            this.textbox_ReproStep.TabIndex = 7;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(3, 190);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(62, 13);
-            this.label12.TabIndex = 6;
-            this.label12.Text = "Repro. step";
+            this.checkbox_description_addImage.AutoSize = true;
+            this.checkbox_description_addImage.Checked = true;
+            this.checkbox_description_addImage.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkbox_description_addImage.Location = new System.Drawing.Point(7, 200);
+            this.checkbox_description_addImage.Name = "checkbox_description_addImage";
+            this.checkbox_description_addImage.Size = new System.Drawing.Size(76, 17);
+            this.checkbox_description_addImage.TabIndex = 14;
+            this.checkbox_description_addImage.Text = "Add image";
+            this.checkbox_description_addImage.UseVisualStyleBackColor = true;
             // 
             // combobox_reason
             // 
@@ -415,6 +399,9 @@
             this.combobox_reason.Name = "combobox_reason";
             this.combobox_reason.Size = new System.Drawing.Size(497, 21);
             this.combobox_reason.TabIndex = 3;
+            this.combobox_reason.Tag = "System.Reason";
+            this.combobox_reason.Enter += new System.EventHandler(this.control_Enter);
+            this.combobox_reason.Leave += new System.EventHandler(this.control_Leave);
             // 
             // label13
             // 
@@ -424,12 +411,107 @@
             this.label13.TabIndex = 2;
             this.label13.Text = "Reason";
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.checkbox_reproStep_AddImage);
+            this.tabPage2.Controls.Add(this.textbox_ReproStep);
+            this.tabPage2.Controls.Add(this.label12);
+            this.tabPage2.Controls.Add(this.textbox_SystemInfo);
+            this.tabPage2.Controls.Add(this.label11);
+            this.tabPage2.Controls.Add(this.combobox_severity);
+            this.tabPage2.Controls.Add(this.textbox_Priority);
+            this.tabPage2.Controls.Add(this.label6);
+            this.tabPage2.Controls.Add(this.label7);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(601, 271);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Custom";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_reproStep_AddImage
+            // 
+            this.checkbox_reproStep_AddImage.AutoSize = true;
+            this.checkbox_reproStep_AddImage.Checked = true;
+            this.checkbox_reproStep_AddImage.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkbox_reproStep_AddImage.Location = new System.Drawing.Point(6, 206);
+            this.checkbox_reproStep_AddImage.Name = "checkbox_reproStep_AddImage";
+            this.checkbox_reproStep_AddImage.Size = new System.Drawing.Size(76, 17);
+            this.checkbox_reproStep_AddImage.TabIndex = 15;
+            this.checkbox_reproStep_AddImage.Text = "Add image";
+            this.checkbox_reproStep_AddImage.UseVisualStyleBackColor = true;
+            // 
+            // textbox_ReproStep
+            // 
+            this.textbox_ReproStep.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textbox_ReproStep.Location = new System.Drawing.Point(98, 187);
+            this.textbox_ReproStep.Multiline = true;
+            this.textbox_ReproStep.Name = "textbox_ReproStep";
+            this.textbox_ReproStep.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textbox_ReproStep.Size = new System.Drawing.Size(497, 78);
+            this.textbox_ReproStep.TabIndex = 7;
+            this.textbox_ReproStep.Tag = "Microsoft.VSTS.TCM.ReproSteps";
+            this.textbox_ReproStep.Enter += new System.EventHandler(this.control_Enter);
+            this.textbox_ReproStep.Leave += new System.EventHandler(this.control_Leave);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(3, 190);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(62, 13);
+            this.label12.TabIndex = 6;
+            this.label12.Text = "Repro. step";
+            // 
+            // textbox_SystemInfo
+            // 
+            this.textbox_SystemInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textbox_SystemInfo.Location = new System.Drawing.Point(98, 72);
+            this.textbox_SystemInfo.Multiline = true;
+            this.textbox_SystemInfo.Name = "textbox_SystemInfo";
+            this.textbox_SystemInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textbox_SystemInfo.Size = new System.Drawing.Size(497, 109);
+            this.textbox_SystemInfo.TabIndex = 5;
+            this.textbox_SystemInfo.Tag = "Microsoft.VSTS.TCM.SystemInfo";
+            this.textbox_SystemInfo.Enter += new System.EventHandler(this.control_Enter);
+            this.textbox_SystemInfo.Leave += new System.EventHandler(this.control_Leave);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(3, 75);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(61, 13);
+            this.label11.TabIndex = 4;
+            this.label11.Text = "System info";
+            // 
+            // statustrip_main
+            // 
+            this.statustrip_main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel_main});
+            this.statustrip_main.Location = new System.Drawing.Point(0, 425);
+            this.statustrip_main.Name = "statustrip_main";
+            this.statustrip_main.Size = new System.Drawing.Size(633, 22);
+            this.statustrip_main.TabIndex = 25;
+            this.statustrip_main.Text = "Help...";
+            // 
+            // toolStripStatusLabel_main
+            // 
+            this.toolStripStatusLabel_main.Name = "toolStripStatusLabel_main";
+            this.toolStripStatusLabel_main.Size = new System.Drawing.Size(44, 17);
+            this.toolStripStatusLabel_main.Text = "Help ...";
+            // 
             // AddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(633, 447);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.statustrip_main);
+            this.Controls.Add(this.tabControl_Field);
             this.Controls.Add(this.button_save);
             this.Controls.Add(this.label_workItemType);
             this.Controls.Add(this.combobox_workItemType);
@@ -442,11 +524,13 @@
             this.Name = "AddForm";
             this.Text = "Add work item";
             ((System.ComponentModel.ISupportInitialize)(this.textbox_Priority)).EndInit();
-            this.tabControl1.ResumeLayout(false);
+            this.tabControl_Field.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.statustrip_main.ResumeLayout(false);
+            this.statustrip_main.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -478,7 +562,7 @@
         private System.Windows.Forms.TextBox textbox_description;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.NumericUpDown textbox_Priority;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabControl_Field;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TextBox textbox_SystemInfo;
@@ -487,5 +571,10 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.ComboBox combobox_reason;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.CheckBox checkbox_description_addImage;
+        private System.Windows.Forms.CheckBox checkbox_reproStep_AddImage;
+        private System.Windows.Forms.ToolTip tooltip_Main;
+        private System.Windows.Forms.StatusStrip statustrip_main;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_main;
     }
 }

@@ -24,59 +24,67 @@ using System.Xml;
 
 namespace GreenshotTFSPlugin
 {
-	/// <summary>
-	/// Description of ImgurInfo.
-	/// </summary>
-	public class TFSInfo : IDisposable {
-		private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(TFSInfo));
+    /// <summary>
+    /// Description of ImgurInfo.
+    /// </summary>
+    public class TFSInfo : IDisposable
+    {
+        private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(TFSInfo));
 
 
-		private string id;
-		public string ID
-		{
-			get { return this.id; }
-			set { this.id = value; }
-		}
+        private string id;
+        public string ID
+        {
+            get { return this.id; }
+            set { this.id = value; }
+        }
 
-		private string title;
-		public string Title {
-			get {return title;}
-			set {title = value;}
-		}
+        private string title;
+        public string Title
+        {
+            get { return title; }
+            set { title = value; }
+        }
 
-		private string description;
-		public string Description
-		{
-			get { return this.description; }
-			set { this.description = value; }
-		}
+        private string description;
+        public string Description
+        {
+            get { return this.description; }
+            set { this.description = value; }
+        }
 
-		private string webUrl;
-		public string WebUrl
-		{
-			get { return this.webUrl; }
-			set { this.webUrl = value; }
-		}
+        private string webUrl;
+        public string WebEditUrl
+        {
+            get { return this.webUrl; }
+            set { this.webUrl = value; }
+        }
 
-	public TFSInfo() {
-		}
+        public string WebDetailUrl { get; set; }
 
-		/// <summary>
-		/// The public accessible Dispose
-		/// Will call the GarbageCollector to SuppressFinalize, preventing being cleaned twice
-		/// </summary>
-		public void Dispose() {
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public TFSInfo()
+        {
+        }
 
-		/// <summary>
-		/// This Dispose is called from the Dispose and the Destructor.
-		/// When disposing==true all non-managed resources should be freed too!
-		/// </summary>
-		/// <param name="disposing"></param>
-		protected virtual void Dispose(bool disposing) {
-			
-		}
-	}
+        /// <summary>
+        /// The public accessible Dispose
+        /// Will call the GarbageCollector to SuppressFinalize, preventing being cleaned twice
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// This Dispose is called from the Dispose and the Destructor.
+        /// When disposing==true all non-managed resources should be freed too!
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+
+        }
+
+    }
 }

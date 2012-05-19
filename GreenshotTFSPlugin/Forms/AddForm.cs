@@ -5,12 +5,15 @@
     using System.IO;
     using System.Net;
     using System.Text;
+    using System.Linq;
     using System.Windows.Forms;
     using GreenshotPlugin.Controls;
     using GreenshotPlugin.Core;
     using IniFile;
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.WorkItemTracking.Client;
+    using Microsoft.TeamFoundation;
+    using Microsoft.Win32;
 
     public partial class AddForm : Form
     {
@@ -45,6 +48,21 @@
             WebBrowser browser = new WebBrowser();
             systemInfo.AppendFormat("Internet explorer version : {0}{1}", browser.Version, SystemInformation.WorkingArea.Width.ToString(), Environment.NewLine);
             browser.Dispose();
+
+            //version firefox
+            var regKeyFirefox = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Mozilla\Mozilla Firefox", false);
+            if (regKeyFirefox != null)
+            {
+                systemInfo.AppendFormat("{0}Firefox version :{1}",Environment.NewLine, regKeyFirefox.GetValue("CurrentVersion"));
+            }
+
+            //version chrome
+            var regKeyChrome = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome", false);
+            if (regKeyChrome != null)
+            {
+                systemInfo.AppendFormat("{0}Chrome version : {1}",Environment.NewLine, regKeyChrome.GetValue("Version"));
+            }
+
 
             textbox_SystemInfo.Text = systemInfo.ToString();
         }
@@ -141,14 +159,24 @@
                     workItem.Fields["System.Reason"].Value = combobox_reason.Text;
                 }
 
-                if (workItem.Fields.Contains("Microsoft.VSTS.TCM.SystemInfo"))
+                string fieldSystenInfo = "Microsoft.VSTS.TCM.SystemInfo";
+                if (workItem.Fields.Contains(fieldSystenInfo))
                 {
-                    workItem.Fields["Microsoft.VSTS.TCM.SystemInfo"].Value = textbox_ReproStep.Text;
+                    if (workItem.Fields[fieldSystenInfo].FieldDefinition.FieldType == FieldType.Html)
+                    {
+                        workItem.Fields[fieldSystenInfo].Value = textbox_SystemInfo.Text.Replace(Environment.NewLine,"<br/>");
+                    }
+                    else
+                    {
+                        workItem.Fields[fieldSystenInfo].Value = textbox_SystemInfo.Text;
+                    }
+
                 }
 
-                if (workItem.Fields.Contains("Microsoft.VSTS.TCM.ReproStreps"))
+                string fieldsReproStreps = "Microsoft.VSTS.TCM.ReproSteps";
+                if (workItem.Fields.Contains(fieldsReproStreps))
                 {
-                    workItem.Fields["Microsoft.VSTS.TCS.ReproStreps"].Value = textbox_SystemInfo.Text;
+                    workItem.Fields[fieldsReproStreps].Value = textbox_ReproStep.Text;
                 }
 
                 // add image
@@ -165,7 +193,7 @@
 
                 if (validationErrors.Count == 0)
                 {
-                    // workItem.Save();
+                    workItem.Save();
 
                     if (this.TFSInfo == null)
                     {
@@ -175,8 +203,40 @@
                     this.TFSInfo.ID = workItem.Id.ToString();
                     this.TFSInfo.Title = workItem.Title;
                     this.TFSInfo.Description = workItem.Description;
-                    this.TFSInfo.WebUrl = workItem.Uri.ToString();
 
+                    // http://stackoverflow.com/questions/6466441/how-to-map-a-tfs-item-url-to-something-viewable
+                    var testManagementService = tfs.GetService<ILinking>();
+                    this.TFSInfo.WebDetailUrl = testManagementService.GetArtifactUrlExternal(workItem.Uri.ToString());
+                    
+                    var myService = tfs.GetService<TswaClientHyperlinkService>();
+                   this.TFSInfo.WebEditUrl = myService.GetWorkItemEditorUrl(workItem.Id).ToString();
+                    
+
+                    if (checkbox_description_addImage.Checked)
+                    {
+                        if (workItem.Fields["System.Description"].FieldDefinition.FieldType == FieldType.Html)
+                        {
+                            workItem.Description += string.Format("<br/><a href=\"{0}\"><img src=\"{0}\" /></a>", workItem.Attachments[0].Uri.ToString());
+                        }
+                        else
+                        {
+                            workItem.Description += System.Environment.NewLine + workItem.Attachments[0].Uri.ToString();
+                        }
+                    }
+
+                    if (checkbox_reproStep_AddImage.Checked && (workItem.Fields.Contains(fieldsReproStreps)))
+                    {
+                        if (workItem.Fields[fieldsReproStreps].FieldDefinition.FieldType == FieldType.Html)
+                        {
+                            workItem.Fields[fieldsReproStreps].Value += string.Format("<br/><a href=\"{0}\"><img src=\"{0}\" /></a>", workItem.Attachments[0].Uri.ToString());
+                        }
+                        else
+                        {
+                            workItem.Fields[fieldsReproStreps].Value += System.Environment.NewLine + workItem.Attachments[0].Uri.ToString();
+                        }
+                    }
+
+                    workItem.Save();
 
                     this.SetLastValue();
                     DialogResult = DialogResult.OK;
@@ -186,7 +246,7 @@
                     string errrorMsg = "Validation Error in field\n";
                     foreach (Field field in validationErrors)
                     {
-                        errrorMsg += field.ReferenceName + "\n";
+                        errrorMsg += field.Name + "\n";
                     }
 
                     MessageBox.Show(errrorMsg);
@@ -282,7 +342,7 @@
             {
                 try
                 {
-                    using (var tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text)))
+                   using (var tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text)))
                     {
                         WorkItemStore workItemStore = (WorkItemStore)tfs.GetService(typeof(WorkItemStore));
                         Project project = workItemStore.Projects[this.textbox_defaultProject.Text];
@@ -355,28 +415,68 @@
 
         private void BindScreenByItemType()
         {
-            this.BindComboBox(combobox_AssignTo, CoreField.AssignedTo);
+            //disabled control not in workItem and bind combobox
+            using (var tfs = new TfsTeamProjectCollection(new Uri(this.textbox_tfsUrl.Text)))
+            {
+                WorkItemStore workItemStore = (WorkItemStore)tfs.GetService(typeof(WorkItemStore));
+                WorkItemTypeCollection workItemTypes = workItemStore.Projects[this.textbox_defaultProject.Text].WorkItemTypes;
+                WorkItemType workItemType = workItemTypes[combobox_workItemType.Text];
+
+                foreach (TabPage tabPage in tabControl_Field.TabPages)
+                {
+                    foreach (Control ctl in tabPage.Controls)
+                    {
+                        if (ctl.Tag != null)
+                        {
+                            ctl.Enabled = false;
+                            if (workItemType.FieldDefinitions.Contains(ctl.Tag.ToString()))
+                            {
+                                var fieldDefinition = workItemType.FieldDefinitions[ctl.Tag.ToString()];
+                                ctl.Enabled = (fieldDefinition.IsEditable && ! fieldDefinition.IsComputed);
+                                
+                                if(! string.IsNullOrEmpty(fieldDefinition.HelpText))
+                                {
+                                    tooltip_Main.SetToolTip(ctl, fieldDefinition.HelpText);
+                                }
+
+                                if (ctl is ComboBox)
+                                {
+                                    ((ComboBox)ctl).Items.Clear();
+                                    foreach (var allowedValue in fieldDefinition.AllowedValues)
+                                    {
+                                        ((ComboBox)ctl).Items.Add(allowedValue);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
             combobox_AssignTo.SelectedValue = config.TfsAssignedTo;
 
-            // this.bindComboBox(combobox_severity,CoreField.se);
-            combobox_severity.SelectedValue = config.TfsSeverity;
             if (combobox_severity.SelectedItem == null && combobox_severity.Items.Count > 0)
             {
                 combobox_severity.SelectedIndex = 0;
             }
 
-            this.BindComboBox(combobox_state, CoreField.State);
             combobox_state.SelectedValue = config.TfsState;
             if (combobox_state.SelectedItem == null && combobox_state.Items.Count > 0)
             {
                 combobox_state.SelectedIndex = 0;
             }
 
-            this.BindComboBox(combobox_reason, CoreField.Reason);
             combobox_reason.SelectedValue = config.TfsState;
             if (combobox_reason.SelectedItem == null && combobox_reason.Items.Count > 0)
             {
-                combobox_reason.SelectedIndex = 0;
+                // set to new if exist
+                combobox_reason.SelectedItem = "New";
+
+                if (combobox_reason.SelectedItem == null && combobox_reason.Items.Count > 0)
+                {
+                    combobox_reason.SelectedIndex = 0;
+                }
             }
         }
 
@@ -393,6 +493,16 @@
             {
                 backgroundForm.CloseDialog();
             }
+        }
+
+        private void control_Enter(object sender, EventArgs e)
+        {
+            toolStripStatusLabel_main.Text = tooltip_Main.GetToolTip((Control)sender);
+        }
+
+        private void control_Leave(object sender, EventArgs e)
+        {
+            toolStripStatusLabel_main.Text = string.Empty;
         }
     }
 }

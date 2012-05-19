@@ -203,7 +203,7 @@ namespace GreenshotTFSPlugin.Forms {
 				{
 					TFSInfo TFSInfo = (TFSInfo)listview_TFS_uploads.SelectedItems[i].Tag;
 
-					System.Diagnostics.Process.Start(TFSInfo.WebUrl);
+					System.Diagnostics.Process.Start(TFSInfo.WebEditUrl);
 				}
 			}
 			
@@ -218,7 +218,7 @@ namespace GreenshotTFSPlugin.Forms {
 				{
 					TFSInfo TFSInfo = (TFSInfo)listview_TFS_uploads.SelectedItems[i].Tag;
 
-					links.AppendLine(TFSInfo.WebUrl);
+					links.AppendLine(TFSInfo.WebEditUrl);
 				}
 			}
 			try

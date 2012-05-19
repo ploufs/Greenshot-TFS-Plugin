@@ -180,13 +180,13 @@ namespace GreenshotTFSPlugin
                             TFSHistory.ShowHistory();
                         }
 
-                        if (config.AfterUploadLinkToClipBoard && ! string.IsNullOrEmpty(tfsInfo.WebUrl))
+                        if (config.AfterUploadLinkToClipBoard && ! string.IsNullOrEmpty(tfsInfo.WebEditUrl))
                         {
-                            Clipboard.SetText(tfsInfo.WebUrl);
+                            Clipboard.SetText(tfsInfo.WebEditUrl);
                         }
-                        if (config.AfterUploadOpenWorkItem && !string.IsNullOrEmpty(tfsInfo.WebUrl))
+                        if (config.AfterUploadOpenWorkItem && !string.IsNullOrEmpty(tfsInfo.WebEditUrl))
                         {
-                            System.Diagnostics.Process.Start(tfsInfo.WebUrl);
+                            System.Diagnostics.Process.Start(tfsInfo.WebEditUrl);
                         }
                         return true;
                     }
