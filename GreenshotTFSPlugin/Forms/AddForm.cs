@@ -127,17 +127,23 @@
                 workItem.Title = textbox_title.Text;
                 workItem.Description = textbox_description.Text;
 
-                if (combobox_AssignTo.SelectedItem != null)
+                var fieldAssignTo = "System.AssignedTo";
+                if (combobox_AssignTo.SelectedItem != null && workItem.Fields.Contains(fieldAssignTo))
                 {
-                    workItem.Fields["System.AssignedTo"].Value = combobox_AssignTo.Text;
+                    workItem.Fields[fieldAssignTo].Value = combobox_AssignTo.Text;
                 }
 
-                if (combobox_severity.SelectedItem != null)
+                var fieldSeverity="Microsoft.VSTS.Common.Severity";
+                if (combobox_severity.SelectedItem != null &&  workItem.Fields.Contains(fieldSeverity))
                 {
-                    workItem.Fields["Microsoft.VSTS.Common.Severity"].Value = combobox_severity.Text;
+                    workItem.Fields[fieldSeverity].Value = combobox_severity.Text;
                 }
 
-                workItem.Fields["Microsoft.VSTS.Common.Priority"].Value = textbox_Priority.Text;
+                var fieldPriority = "Microsoft.VSTS.Common.Priority";
+                if (workItem.Fields.Contains(fieldPriority))
+                {
+                    workItem.Fields[fieldPriority].Value = textbox_Priority.Text;
+                }
 
                 if (combobox_AreaPath.SelectedItem != null)
                 {
@@ -149,12 +155,14 @@
                     workItem.IterationPath = combobox_IterationPath.Text;
                 }
 
-                if (combobox_state.SelectedItem != null)
+                var fieldState = "System.State";
+                if (combobox_state.SelectedItem != null && workItem.Fields.Contains(fieldState))
                 {
-                    workItem.Fields["System.State"].Value = combobox_state.Text;
+                    workItem.Fields[fieldState].Value = combobox_state.Text;
                 }
 
-                if (combobox_reason.SelectedItem != null)
+                var fieldReason = "System.Reason";
+                if (combobox_reason.SelectedItem != null && workItem.Fields.Contains(fieldReason))
                 {
                     workItem.Fields["System.Reason"].Value = combobox_reason.Text;
                 }
@@ -177,6 +185,10 @@
                 if (workItem.Fields.Contains(fieldsReproStreps))
                 {
                     workItem.Fields[fieldsReproStreps].Value = textbox_ReproStep.Text;
+                    if (string.IsNullOrEmpty(textbox_ReproStep.Text))
+                    {
+                        workItem.Fields[fieldsReproStreps].Value = workItem.Description;
+                    }
                 }
 
                 // add image
