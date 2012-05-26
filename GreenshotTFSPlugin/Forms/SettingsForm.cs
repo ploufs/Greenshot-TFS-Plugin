@@ -34,8 +34,7 @@ namespace GreenshotTFSPlugin {
 	/// Description of PasswordRequestForm.
 	/// </summary>
 	public partial class SettingsForm : Form {
-		private ILanguage lang = Language.GetInstance();
-		private string TFSFrob = string.Empty;
+	private string TFSFrob = string.Empty;
 
 		public SettingsForm(TFSConfiguration config) {
 			//
@@ -59,14 +58,14 @@ namespace GreenshotTFSPlugin {
 		}
 				
 		private void InitializeTexts() {
-			this.buttonOK.Text = lang.GetString(LangKey.OK);
+			this.buttonOK.Text = Language.GetString("tfs",LangKey.OK);
 			
-			this.buttonCancel.Text = lang.GetString(LangKey.CANCEL);
-			this.Text = lang.GetString(LangKey.settings_title);
-			this.label_upload_format.Text = lang.GetString(LangKey.label_upload_format);
-			this.label_AfterUpload.Text = lang.GetString(LangKey.label_AfterUpload);
-			this.checkboxAfterUploadOpenHistory.Text = lang.GetString(LangKey.label_AfterUploadOpenHistory);
-			this.checkboxAfterUploadLinkToClipBoard.Text = lang.GetString(LangKey.label_AfterUploadLinkToClipBoard);
+			this.buttonCancel.Text = Language.GetString("tfs",LangKey.CANCEL);
+			this.Text = Language.GetString("tfs",LangKey.settings_title);
+			this.label_upload_format.Text = Language.GetString("tfs",LangKey.label_upload_format);
+			this.label_AfterUpload.Text = Language.GetString("tfs",LangKey.label_AfterUpload);
+			this.checkboxAfterUploadOpenHistory.Text = Language.GetString("tfs",LangKey.label_AfterUploadOpenHistory);
+			this.checkboxAfterUploadLinkToClipBoard.Text = Language.GetString("tfs",LangKey.label_AfterUploadLinkToClipBoard);
 		}
 
 		public bool AfterUploadOpenHistory {

@@ -24,7 +24,7 @@ using System.Windows.Forms;
 
 using GreenshotPlugin.Controls;
 using GreenshotPlugin.Core;
-using IniFile;
+using Greenshot.IniFile;
 
 namespace GreenshotTFSPlugin
 {
@@ -109,9 +109,8 @@ namespace GreenshotTFSPlugin
         public bool ShowConfigDialog()
         {
             SettingsForm settingsForm;
-            ILanguage lang = Language.GetInstance();
-
-            BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
+            
+            BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, Language.GetString("tfs",LangKey.communication_wait));
             try
             {
                 settingsForm = new SettingsForm(this);

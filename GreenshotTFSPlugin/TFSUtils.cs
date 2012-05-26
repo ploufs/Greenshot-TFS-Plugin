@@ -26,7 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using GreenshotPlugin.Core;
-using IniFile;
+using Greenshot.IniFile;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using GreenshotTFSPlugin.Forms;
@@ -98,8 +98,7 @@ namespace GreenshotTFSPlugin {
 		/// <returns>TFSResponse</returns>
 		public static TFSInfo UploadToTFS(byte[] imageData, string title, string filename, string contentType)
 		{
-			ILanguage lang = Language.GetInstance();
-			BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
+			BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, Language.GetString("tfs",LangKey.communication_wait));
 			AddForm addForm = null;
 			try
 			{

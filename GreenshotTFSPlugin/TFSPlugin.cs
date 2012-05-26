@@ -29,11 +29,11 @@ using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 
-using Greenshot.Plugin;
 using GreenshotTFSPlugin.Forms;
+using Greenshot.Plugin;
 using GreenshotPlugin.Controls;
 using GreenshotPlugin.Core;
-using IniFile;
+using Greenshot.IniFile;
 
 namespace GreenshotTFSPlugin
 {
@@ -45,12 +45,12 @@ namespace GreenshotTFSPlugin
         private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(TFSPlugin));
         private static TFSConfiguration config;
         public static PluginAttribute Attributes;
-        private ILanguage lang = Language.GetInstance();
         private IGreenshotHost host;
         private ComponentResourceManager resources;
       
         public TFSPlugin()
         {
+            
         }
 
         public IEnumerable<IDestination> Destinations()
@@ -72,33 +72,44 @@ namespace GreenshotTFSPlugin
         /// <param name="pluginAttribute">My own attributes</param>
         public virtual bool Initialize(IGreenshotHost pluginHost, PluginAttribute myAttributes)
         {
-            this.host = (IGreenshotHost)pluginHost;
-            Attributes = myAttributes;
+            try
+            {
 
-            // Get configuration
-            config = IniConfig.GetIniSection<TFSConfiguration>();
-            resources = new ComponentResourceManager(typeof(TFSPlugin));
+                this.host = (IGreenshotHost)pluginHost;
+                Attributes = myAttributes;
 
-            ToolStripMenuItem itemPlugInRoot = new ToolStripMenuItem();
-            itemPlugInRoot.Text = "TFS";
-            itemPlugInRoot.Tag = host;
-            //itemPlugInRoot.Image = (Image)resources.GetObject("TFS");
+                // Get configuration
+                config = IniConfig.GetIniSection<TFSConfiguration>();
+                resources = new ComponentResourceManager(typeof(TFSPlugin));
 
-             ToolStripMenuItem itemPlugInHistory = new ToolStripMenuItem();
-            itemPlugInHistory.Text = lang.GetString(LangKey.History);
-            itemPlugInHistory.Tag = host;
-            itemPlugInHistory.Click += new System.EventHandler(HistoryMenuClick);
-            itemPlugInRoot.DropDownItems.Add(itemPlugInHistory);
+                ToolStripMenuItem itemPlugInRoot = new ToolStripMenuItem();
+                itemPlugInRoot.Text = "TFS";
+                itemPlugInRoot.Tag = host;
+                //itemPlugInRoot.Image = (Image)resources.GetObject("TFS");
 
-            ToolStripMenuItem itemPlugInConfig = new ToolStripMenuItem();
-            itemPlugInConfig.Text = lang.GetString(LangKey.Configure);
-            itemPlugInConfig.Tag = host;
-            itemPlugInConfig.Click += new System.EventHandler(ConfigMenuClick);
-            itemPlugInRoot.DropDownItems.Add(itemPlugInConfig);
+                ToolStripMenuItem itemPlugInHistory = new ToolStripMenuItem();
+                itemPlugInHistory.Text = Language.GetString("tfs",LangKey.History);
+                itemPlugInHistory.Tag = host;
+                itemPlugInHistory.Click += new System.EventHandler(HistoryMenuClick);
+                itemPlugInRoot.DropDownItems.Add(itemPlugInHistory);
 
-            PluginUtils.AddToContextMenu(host, itemPlugInRoot);
-            
-            return true;
+                ToolStripMenuItem itemPlugInConfig = new ToolStripMenuItem();
+
+                itemPlugInConfig.Text = Language.GetString("tfs",LangKey.Configure);
+                itemPlugInConfig.Tag = host;
+                itemPlugInConfig.Click += new System.EventHandler(ConfigMenuClick);
+                itemPlugInRoot.DropDownItems.Add(itemPlugInConfig);
+
+                PluginUtils.AddToContextMenu(host, itemPlugInRoot);
+
+                return true;
+            }
+            catch (Exception eError)
+            {
+                MessageBox.Show("Error init : " + eError.ToString());
+                return false;
+            }
+
         }
 
         public virtual void Shutdown()
@@ -141,8 +152,11 @@ namespace GreenshotTFSPlugin
         {
             using (MemoryStream stream = new MemoryStream())
             {
-              
-                host.SaveToStream(image, stream, config.UploadFormat, config.UploadJpegQuality);
+
+                OutputSettings outputSettings = new OutputSettings();
+                outputSettings.Format=config.UploadFormat;
+                outputSettings.JPGQuality=config.UploadJpegQuality;
+                host.SaveToStream(image, stream, outputSettings);
                 byte[] buffer = stream.GetBuffer();
 
                 try
@@ -193,7 +207,7 @@ namespace GreenshotTFSPlugin
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(lang.GetString(LangKey.upload_failure) + " " + e.ToString());
+                    MessageBox.Show(Language.GetString("tfs", LangKey.upload_failure) + " " + e.ToString());
                 }
                 finally
                 {

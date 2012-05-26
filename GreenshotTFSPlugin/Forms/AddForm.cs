@@ -9,7 +9,7 @@
     using System.Windows.Forms;
     using GreenshotPlugin.Controls;
     using GreenshotPlugin.Core;
-    using IniFile;
+    using Greenshot.IniFile;
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.WorkItemTracking.Client;
     using Microsoft.TeamFoundation;
@@ -93,8 +93,7 @@
                     textbox_defaultProject.Text = tpp.SelectedProjects[0].Name;
                     button_save.Enabled = true;
 
-                    ILanguage lang = Language.GetInstance();
-                    BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
+                    BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, Language.GetString("tfs",LangKey.communication_wait));
 
                     try
                     {
@@ -494,8 +493,7 @@
 
         private void combobox_workItemType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ILanguage lang = Language.GetInstance();
-            BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
+            BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, Language.GetString("tfs", LangKey.communication_wait));
 
             try
             {

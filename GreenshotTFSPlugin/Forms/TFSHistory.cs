@@ -26,7 +26,7 @@ using System.Windows.Forms;
 
 using GreenshotPlugin.Controls;
 using GreenshotPlugin.Core;
-using IniFile;
+using Greenshot.IniFile;
 
 namespace GreenshotTFSPlugin.Forms {
 	/// <summary>
@@ -36,7 +36,6 @@ namespace GreenshotTFSPlugin.Forms {
 		private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(TFSHistory));
 		private ListViewColumnSorter columnSorter;
 		private static TFSConfiguration config = IniConfig.GetIniSection<TFSConfiguration>();
-		private ILanguage lang = Language.GetInstance();
 		private static TFSHistory instance;
 		
 		public static void ShowHistory() {
@@ -170,10 +169,10 @@ namespace GreenshotTFSPlugin.Forms {
 				for (int i = 0; i < listview_TFS_uploads.SelectedItems.Count; i++)
 				{
 					TFSInfo imgurInfo = (TFSInfo)listview_TFS_uploads.SelectedItems[i].Tag;
-					DialogResult result = MessageBox.Show(lang.GetFormattedString(LangKey.delete_question, imgurInfo.Title), lang.GetFormattedString(LangKey.delete_title, imgurInfo.ID), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+					DialogResult result = MessageBox.Show(Language.GetFormattedString(LangKey.delete_question, imgurInfo.Title), Language.GetFormattedString(LangKey.delete_title, imgurInfo.ID), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 					if (result == DialogResult.Yes)
 					{
-						BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, lang.GetString(LangKey.communication_wait));
+						BackgroundForm backgroundForm = BackgroundForm.ShowAndWait(TFSPlugin.Attributes.Name, Language.GetString("tfs",LangKey.communication_wait));
 						try
 						{
 							TFSUtils.DeleteTfsWorkItem(imgurInfo);

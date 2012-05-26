@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using Greenshot.Plugin;
 using GreenshotPlugin.Core;
-using IniFile;
+using Greenshot.IniFile;
 
 namespace GreenshotTFSPlugin
 {
@@ -11,8 +11,7 @@ namespace GreenshotTFSPlugin
 	{
 		private static log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(TFSDestination));
 		private static TFSConfiguration config = IniConfig.GetIniSection<TFSConfiguration>();
-		private ILanguage lang = Language.GetInstance();
-
+		
 		private TFSPlugin plugin = null;
 		public TFSDestination(TFSPlugin plugin) {
 			this.plugin = plugin;
@@ -26,7 +25,7 @@ namespace GreenshotTFSPlugin
 
 		public override string Description {
 			get {
-				return lang.GetString(LangKey.upload_menu_item);
+				return Language.GetString("tfs", LangKey.upload_menu_item);
 			}
 		}
 
@@ -37,7 +36,8 @@ namespace GreenshotTFSPlugin
 			}
 		}
 
-		public override bool ExportCapture(ISurface surface, ICaptureDetails captureDetails) {
+		public override bool ExportCapture(bool manuallyInitiated, ISurface surface, ICaptureDetails captureDetails)
+		{
 			using (Image image = surface.GetImageForExport()) {
 				bool uploaded = plugin.Upload(captureDetails, image);
 				if (uploaded) {
